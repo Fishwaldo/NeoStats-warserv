@@ -155,22 +155,17 @@ void ModFini (void)
 */
 static int ws_cmd_set_chan(CmdParams *cmdparams, SET_REASON reason) 
 {
-	irc_chanalert (ws_bot, "in set chan processing, reason %d", reason);
 	if (reason == SET_VALIDATE) {
-		irc_chanalert (ws_bot, "reason validate");
 		if (currentwargamestatus != WS_GAME_STOPPED) {
-			irc_chanalert (ws_bot, "game running unable to change");
 			irc_prefmsg (ws_bot, cmdparams->source, "Unable to change Game Channel while Game in Progress.");
 			return NS_FAILURE;
 		}
-		irc_chanalert (ws_bot, "game stopped should fall through");
-		irc_chanalert (ws_bot, "Game Channel Changing, Parting %s", warroom);
+		irc_chanalert (ws_bot, "Game Channel Changing to %s , Parting %s (%s)", cmdparams->av[1], warroom, cmdparams->source->name);
+		irc_chanprivmsg (ws_bot, warroom, "\0039%s has changed Channels, Game will now be available in %s", cmdparams->source->name, cmdparams->av[1]);
 		irc_part (ws_bot, warroom, NULL);
 		return NS_SUCCESS;
 	}
-	irc_chanalert (ws_bot, "after validate processing");
 	if (reason == SET_CHANGE) {
-		irc_chanalert (ws_bot, "in change processing");
 		irc_join (ws_bot, warroom, "+o");
 		irc_chanalert (ws_bot, "Game Now Available In %s", warroom);
 		return NS_SUCCESS;
