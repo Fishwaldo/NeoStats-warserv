@@ -105,7 +105,7 @@ static BotInfo ws_botinfo =
 	"WarServ", 
 	BOT_COMMON_HOST, 
 	"War Game Service",
-	BOT_FLAG_SERVICEBOT,
+	BOT_FLAG_SERVICEBOT|BOT_FLAG_PERSIST,
 	ws_commands,
 	ws_settings, 
 };
