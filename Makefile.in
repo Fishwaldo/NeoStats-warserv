@@ -8,7 +8,7 @@ INSTALL_DATA = @INSTALL_DATA@
 DIRECTORY = @DIRINST@/modules/
 INCLUDES = -I@DIRINST@/include/ -I.
 
-SRCS= warserv.c 
+SRCS= warserv.c warserv_help.c play.c events.c
 OBJS= ${SRCS:.c=.o}
 TARGET= warserv.so
 DOCS=README.WarServ

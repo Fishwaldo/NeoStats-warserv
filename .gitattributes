@@ -8,7 +8,11 @@
 /README.WarServ -text
 /configure -text
 /configure.in -text
+/events.c -text
 /install-sh -text
 /modconfig.h.in -text
+/play.c -text
 /warserv.c -text
+/warserv.h -text
 /warserv.vcproj -text
+/warserv_help.c -text
