@@ -21,6 +21,11 @@
 ** $Id$
 */
 
+#ifdef WIN32
+#include "modconfigwin32.h"
+#else
+#include "modconfig.h"
+#endif
 #include "neostats.h"    /* Required for bot support */
 #include "warserv.h"
 
@@ -82,7 +87,7 @@ ModuleInfo module_info = {
 	ws_copyright,
 	ws_about,
 	NEOSTATS_VERSION,
-	"3.0",
+	MODULE_VERSION,
 	__DATE__,
 	__TIME__,
 	0,

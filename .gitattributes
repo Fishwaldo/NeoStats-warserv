@@ -6,11 +6,13 @@
 /Makefile.in -text
 /NEWS -text
 /README.WarServ -text
+/RELNOTES -text
 /configure -text
 /configure.in -text
 /events.c -text
 /install-sh -text
 /modconfig.h.in -text
+/modconfigwin32.h -text
 /play.c -text
 /warserv.c -text
 /warserv.h -text

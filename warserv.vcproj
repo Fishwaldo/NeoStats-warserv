@@ -139,6 +139,9 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
+				RelativePath=".\modconfigwin32.h">
+			</File>
+			<File
 				RelativePath=".\warserv.h">
 			</File>
 		</Filter>
@@ -158,6 +161,9 @@
 		</File>
 		<File
 			RelativePath=".\modconfig.h.in">
+		</File>
+		<File
+			RelativePath=".\Relnotes">
 		</File>
 	</Files>
 	<Globals>
