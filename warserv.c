@@ -50,7 +50,7 @@ int BotMessage (CmdParams* cmdparams);
 /** Copyright info */
 const char *ws_copyright[] = {
 	"Copyright (c) 2004 DeadNotBuried",
-	"Portions Copyright (c) 1999-2004, NeoStats",
+	"Portions Copyright (c) 1999-2005, NeoStats",
 	NULL
 };
 
