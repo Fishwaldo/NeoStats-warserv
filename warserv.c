@@ -593,7 +593,7 @@ int askplaycard() {
 					wspa[4]++;
 				}
 				for (wpln = 2; wpln < 5; wpln++) {
-					snprintf(wspas[wpln], 3, "%d", wspa[wpln]);
+					ircsnprintf(wspas[wpln], 3, "%d", wspa[wpln]);
 				}
 				playwarcards(wspas[2], wspas[3], wspas[4]);
 			} else {
@@ -602,7 +602,7 @@ int askplaycard() {
 		}
 	} else {
 		if (!ircstrcasecmp (wplayernick[currentplayer], ws_bot->name)) {
-			snprintf(wspas[0], 3, "%d", ((rand() % wplayercardstotal[currentplayer]) + 1));
+			ircsnprintf(wspas[0], 3, "%d", ((rand() % wplayercardstotal[currentplayer]) + 1));
 			playcard(wspas[0]);
 		} else {
 			irc_chanprivmsg (ws_bot, warroom, "\0037%s\0039 you currently hold\00311 %d\0039 cards, which would you like to play ?", wplayernick[currentplayer], wplayercardstotal[currentplayer]);
@@ -651,7 +651,7 @@ int playwarcards(char *cnps1, char *cnps2, char *cnps3) {
 			strlcpy (csuitcard, "Jack", 10);
 			break;
 		default:
-			snprintf(csuitcard, 10, "%d", ((wplayercardsinhand[currentplayer][(cnp[2] - 1)] % 13) + 2));
+			ircsnprintf(csuitcard, 10, "%d", ((wplayercardsinhand[currentplayer][(cnp[2] - 1)] % 13) + 2));
 			break;
 	}
 	irc_chanprivmsg (ws_bot, warroom, "\0037%s\0039 played Cards\00311 %d , %d , %d \0039(%s %s of %s \0039)", wplayernick[currentplayer], cnp[0], cnp[1], cnp[2], csuitcolour, csuitcard, csuit);
@@ -717,7 +717,7 @@ int playcard(char *cnps) {
 				strlcpy (csuitcard, "Jack", 10);
 				break;
 			default:
-				snprintf(csuitcard, 10, "%d", ((wplayercardsinhand[currentplayer][(cnp - 1)] % 13) + 2));
+				ircsnprintf(csuitcard, 10, "%d", ((wplayercardsinhand[currentplayer][(cnp - 1)] % 13) + 2));
 				break;
 		}
 		irc_chanprivmsg (ws_bot, warroom, "\0037%s\0039 played Card\00311 %d \0039(%s %s of %s \0039)", wplayernick[currentplayer], cnp, csuitcolour, csuitcard, csuit);
@@ -832,11 +832,3 @@ int clearstack() {
 	}
 	wstackcardscurrent= 0;
 }
-
-#ifdef WIN32 /* temp */
-
-int main (int argc, char **argv)
-{
-	return 0;
-}
-#endif
