@@ -7,7 +7,7 @@ WarServ ChangeLog
 - configure.in updated version number
 - updated license details in source files
 - !stop now calls correct procedure
-- channel seetting now requires user level 180 or above
+- channel setting now requires Oper user level to change channel
 
 1.1
 - added code to enable !stop command

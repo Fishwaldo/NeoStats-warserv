@@ -53,7 +53,7 @@ char csuitcard[10];
 ModuleInfo __module_info = {
 	"WarServ",
 	"War Card Game Module For NeoStats",
-	"1.1",
+	"1.2",
 	__DATE__,
 	__TIME__
 };
@@ -227,7 +227,7 @@ int __BotMessage(char *origin, char **argv, int argc)
 				prefmsg(u->nick, s_module_bot_name, "\2CHAN <channel>\2 - Swap WarGame Channel to <channel>");
 			}
 			return 1;
-		} else if (!strcasecmp(argv[1], "CHAN") && (UserLevel(u) > 179)) {
+		} else if (!strcasecmp(argv[1], "CHAN") && (UserLevel(u) >= NS_ULEVEL_OPER)) {
 			privmsg(warroom, s_module_bot_name, "%s has moved the Game room to %s, Please Go there now to continue the game", u->nick, argv[2]);
 			chanalert(s_module_bot_name, "%s moved the game to %s", u->nick, argv[2]);
 			spart_cmd(s_module_bot_name, warroom);
