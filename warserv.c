@@ -134,7 +134,7 @@ int ModSynch (void)
 /*
  * Init module
 */
-int ModInit (Module *mod_ptr)
+int ModInit( void )
 {
 	stopwar();
 	return NS_SUCCESS;
@@ -143,11 +143,12 @@ int ModInit (Module *mod_ptr)
 /*
  * Exit module
 */
-void ModFini (void)
+int ModFini( void )
 {
 	if (currentwargamestatus == WS_GAME_STARTING) {
 		DelTimer ("startwar");
 	}
+	return NS_SUCCESS;
 }
 
 /*
