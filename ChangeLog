@@ -18,6 +18,6 @@ WarServ ChangeLog
  - added code to enable !stop command
 
 1.0 - Fish 
- - Initial Release. Code Contributed by DeadNotBurried (idontwantthisshit@hotmail.com)
+ - Initial Release. Code Contributed by DeadNotBurried (dnb@majestic-liaisons.com)
  - Make game channel configurable.
  - Standardize on hostname.
