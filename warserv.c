@@ -126,8 +126,7 @@ int ModSynch (void)
 		strlcpy (warroom, "#Games_War", MAXCHANLEN);
 	}
 	irc_chanalert (ws_bot, "Game will start in %s", warroom);
-	irc_join (ws_bot, warroom, NULL);
-	irc_cmode (ws_bot, warroom, "+o", ws_bot->name);
+	irc_join (ws_bot, warroom, "+o");
 	return NS_SUCCESS;
 };
 
