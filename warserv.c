@@ -240,7 +240,7 @@ int BotMessage (CmdParams* cmdparams)
 			strlcpy (warroom, argv[1], MAXCHANLEN);
 			irc_join (ws_bot, warroom, NULL);
 			irc_cmode (ws_bot, warroom, "+o", ws_bot->name);
-			SetConf((void *)warroom, CFGSTR, "WarRoom");
+			DBAStoreConfigStr ("WarRoom", warroom, MAXCHANLEN);
 			free (argv);
 			return NS_SUCCESS;
 		} else {
@@ -274,7 +274,6 @@ static BotInfo ws_botinfo =
 */
 int ModSynch (void)
 {
-	char *tmp;
 	/* Introduce a bot onto the network */
 	ws_bot = AddBot (&ws_botinfo);	
 	if (!ws_bot) {
@@ -282,10 +281,8 @@ int ModSynch (void)
 	}
 	srand((unsigned int)me.now);
 	/* channel to play game in */
-	if (GetConf((void *)&tmp, CFGSTR, "WarRoom") <= 0) {
+	if (DBAFetchConfigStr ("WarRoom", warroom, MAXCHANLEN) != NS_SUCCESS) {
 		strlcpy (warroom, "#Games", MAXCHANLEN);
-	} else {
-		strlcpy (warroom, tmp, MAXCHANLEN);
 	}
 	irc_chanalert (ws_bot, "Game will start in %s", warroom);
 	irc_join (ws_bot, warroom, NULL);

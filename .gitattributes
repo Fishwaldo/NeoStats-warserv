@@ -11,3 +11,4 @@
 /install-sh -text
 /modconfig.h.in -text
 /warserv.c -text
+/warserv.vcproj -text
