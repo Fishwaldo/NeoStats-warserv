@@ -2,10 +2,10 @@
 CC = @CC@
 CFLAGS = @CFLAGS@ -g
 LDFLAGS = @LIBS@
-INSTALL = @INSTALL@                                                                                                                 
-INSTALL_PROGRAM = @INSTALL_PROGRAM@                                                                                                 
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA = @INSTALL_DATA@
-DIRECTORY = @DIRINST@/dl/
+DIRECTORY = @DIRINST@/modules/
 INCLUDES = -I@DIRINST@/include/ -I.
 
 SRCS= warserv.c 
