@@ -1,8 +1,23 @@
 /* WarServ War Card Game Bot - NeoStats Addon Module
 ** Copyright (c) 2004 DeadNotBuried
 **
-**  Released to NeoStats Software 1 April 2004
+**  This program is free software; you can redistribute it and/or modify
+**  it under the terms of the GNU General Public License as published by
+**  the Free Software Foundation; either version 2 of the License, or
+**  (at your option) any later version.
+**
+**  This program is distributed in the hope that it will be useful,
+**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+**  GNU General Public License for more details.
+**
+**  You should have received a copy of the GNU General Public License
+**  along with this program; if not, write to the Free Software
+**  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
+**  USA
+**
 */
+
 
 #include <stdio.h>
 #include "dl.h"       /* Required for module */
@@ -91,11 +106,23 @@ int __ChanMessage(char *origin, char **argv, int argc)
 	}
 	if (argc == 2) {
 		if (!strcasecmp(argv[1], "!rules")) {
-			prefmsg(u->nick, s_module_bot_name, "Welcome To War (The Card Game) Ver 0.7 %s", u->nick);
-			prefmsg(u->nick, s_module_bot_name, " ");
+			prefmsg(u->nick, s_module_bot_name, "Welcome To War (The Card Game) Ver 1.2 %s", u->nick);
 			prefmsg(u->nick, s_module_bot_name, "Written By DeadNotBuried");
 			prefmsg(u->nick, s_module_bot_name, " ");
-			prefmsg(u->nick, s_module_bot_name, "rules will be added later");
+			prefmsg(u->nick, s_module_bot_name, "All cards are Dealt out evenly when the game starts.");
+			prefmsg(u->nick, s_module_bot_name, "The Object of the game is to hold ALL the cards.");
+			prefmsg(u->nick, s_module_bot_name, "Each Player plays a card from their hand, and the");
+			prefmsg(u->nick, s_module_bot_name, "highest card wins all cards played that turn.");
+			prefmsg(u->nick, s_module_bot_name, " ");
+			prefmsg(u->nick, s_module_bot_name, "If the played cards are equal, there is a War.");
+			prefmsg(u->nick, s_module_bot_name, "all played cards stay out, and each player involved");
+			prefmsg(u->nick, s_module_bot_name, "in the war plays 3 more cards. the War continues the");
+			prefmsg(u->nick, s_module_bot_name, "same way, untill someone wins all the played cards.");
+			prefmsg(u->nick, s_module_bot_name, " ");
+			prefmsg(u->nick, s_module_bot_name, "If you don't have enough cards to play, your cards are");
+			prefmsg(u->nick, s_module_bot_name, "automatically put into the center, and you surrender.");
+			prefmsg(u->nick, s_module_bot_name, " ");
+			prefmsg(u->nick, s_module_bot_name, "NOTE: Game can't be joined to after play has started.");
 		} else if (!strcasecmp(argv[1], "!whelp")) {
 			prefmsg(u->nick, s_module_bot_name, "Currently available public WarServ commands");
 			prefmsg(u->nick, s_module_bot_name, "===========================================");
@@ -116,7 +143,7 @@ int __ChanMessage(char *origin, char **argv, int argc)
 		} else if (!strcasecmp(argv[1], "!stop")) {
 			 if (strcasecmp(currentwargamestatus, "stopped")) {
 				 privmsg(warroom, s_module_bot_name, "\0039Stopping Current Game");
-				 warstop(); 
+				 stopwar(); 
 			 }
 		} else if (!strcasecmp(argv[1], "!start")) {
 			if (!strcasecmp(currentwargamestatus, "stopped")) {
@@ -200,8 +227,9 @@ int __BotMessage(char *origin, char **argv, int argc)
 				prefmsg(u->nick, s_module_bot_name, "\2CHAN <channel>\2 - Swap WarGame Channel to <channel>");
 			}
 			return 1;
-		} else if (!strcasecmp(argv[1], "CHAN")) {
+		} else if (!strcasecmp(argv[1], "CHAN") && (UserLevel(u) > 179)) {
 			privmsg(warroom, s_module_bot_name, "%s has moved the Game room to %s, Please Go there now to continue the game", u->nick, argv[2]);
+			chanalert(s_module_bot_name, "%s moved the game to %s", u->nick, argv[2]);
 			spart_cmd(s_module_bot_name, warroom);
 			strlcpy(warroom, argv[2], CHANLEN);
 			sjoin_cmd(s_module_bot_name, warroom);

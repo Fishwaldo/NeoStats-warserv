@@ -1,5 +1,17 @@
 WarServ ChangeLog
 =============================================================================
+1.2 - DeadNotBuried
+- added Installation Instructions to Readme file
+- fixed version number displayed in !rules
+- added explanation of games to !rules
+- configure.in updated version number
+- updated license details in source files
+- !stop now calls correct procedure
+- channel seetting now requires user level 180 or above
+
+1.1
+- added code to enable !stop command
+
 1.0 - Fish 
 - Initial Release. Code Contributed by DeadNotBurried (idontwantthisshit@hotmail.com)
 - Make game channel configurable.
