@@ -18,15 +18,11 @@
 **
 */
 
+#include "neostats.h"    /* Required for bot support */
 
-#include <stdio.h>
-#include "dl.h"       /* Required for module */
-#include "stats.h"    /* Required for bot support */
-#include "log.h"      /* Log systems support */
-#include "conf.h"
+Bot *ws_bot;
 
-char s_module_bot_name[MAXNICK];
-char warroom[CHANLEN];
+char warroom[MAXCHANLEN];
 char currentwargamestatus[10];
 int currentwarplayercount;
 char wplayernick[10][MAXNICK];
@@ -46,37 +42,30 @@ char csuit[10];
 char csuitcolour[10];
 char csuitcard[10];
 
-/*
- * Module Info definition 
-*/
-ModuleInfo __module_info = {
-	"WarServ",
-	"War Card Game Module For NeoStats",
-	"1.2",
-	__DATE__,
-	__TIME__
+int startwar(void);
+
+
+/** Copyright info */
+const char *ws_copyright[] = {
+	"Copyright (c) 2004 DeadNotBuried",
+	"Portions Copyright (c) 1999-2004, NeoStats",
+	NULL
 };
 
 /*
- * respond to the /VERSION command
+ * Module Info definition 
 */
-int new_m_version(char *origin, char **av, int ac)
-{
-	snumeric_cmd(351, origin, "Module WarServ Loaded, Version: %s %s %s",
-		__module_info.module_version, __module_info.module_build_date,
-		__module_info.module_build_time);
-	return 0;
-}
-
-/*
- * Module function list
-*/
-Functions __module_functions[] = {
-	{MSG_VERSION, new_m_version, 1},
-#ifdef HAVE_TOKEN_SUP
-	{TOK_VERSION, new_m_version, 1},
-#endif
-	{NULL, NULL, 0}
+ModuleInfo module_info = {
+	"WarServ",
+	"War Card Game Module For NeoStats",
+	ws_copyright,
+	NULL,
+	NEOSTATS_VERSION,
+	"3.0",
+	__DATE__,
+	__TIME__,
+	0,
+	0,
 };
 
 /*
@@ -84,99 +73,97 @@ Functions __module_functions[] = {
 */
 int __ChanMessage(char *origin, char **argv, int argc)
 {
-	char *tsptr;
-	User *u;
-	char *buf;
-	char *bufchal;
+	Client *u;
+
 	if (argc < 1) {
 		return -1;
 	}
-	if (strcasecmp(argv[0], warroom)) {
+	if (ircstrcasecmp (argv[0], warroom)) {
 		return -1;
 	}
-	u = finduser(origin);
+	u = find_user (origin);
 	if (!u) {
 		return -1;
 	}
 	if (argc == 2) {
-		if (!strcasecmp(argv[1], "!rules")) {
-			prefmsg(u->nick, s_module_bot_name, "Welcome To War (The Card Game) Ver 1.2 %s", u->nick);
-			prefmsg(u->nick, s_module_bot_name, "Written By DeadNotBuried");
-			prefmsg(u->nick, s_module_bot_name, " ");
-			prefmsg(u->nick, s_module_bot_name, "All cards are Dealt out evenly when the game starts.");
-			prefmsg(u->nick, s_module_bot_name, "The Object of the game is to hold ALL the cards.");
-			prefmsg(u->nick, s_module_bot_name, "Each Player plays a card from their hand, and the");
-			prefmsg(u->nick, s_module_bot_name, "highest card wins all cards played that turn.");
-			prefmsg(u->nick, s_module_bot_name, " ");
-			prefmsg(u->nick, s_module_bot_name, "If the played cards are equal, there is a War.");
-			prefmsg(u->nick, s_module_bot_name, "all played cards stay out, and each player involved");
-			prefmsg(u->nick, s_module_bot_name, "in the war plays 3 more cards. the War continues the");
-			prefmsg(u->nick, s_module_bot_name, "same way, untill someone wins all the played cards.");
-			prefmsg(u->nick, s_module_bot_name, " ");
-			prefmsg(u->nick, s_module_bot_name, "If you don't have enough cards to play, your cards are");
-			prefmsg(u->nick, s_module_bot_name, "automatically put into the center, and you surrender.");
-			prefmsg(u->nick, s_module_bot_name, " ");
-			prefmsg(u->nick, s_module_bot_name, "NOTE: Game can't be joined to after play has started.");
-		} else if (!strcasecmp(argv[1], "!whelp")) {
-			prefmsg(u->nick, s_module_bot_name, "Currently available public WarServ commands");
-			prefmsg(u->nick, s_module_bot_name, "===========================================");
-			prefmsg(u->nick, s_module_bot_name, "!whelp      -- Displays this help");
-			prefmsg(u->nick, s_module_bot_name, "!rules      -- displays war rules");
-			prefmsg(u->nick, s_module_bot_name, "!about      -- displays about information");
-			prefmsg(u->nick, s_module_bot_name, "!start      -- Starts a new game");
-			prefmsg(u->nick, s_module_bot_name, "!stop       -- Stops the current game");
-			prefmsg(u->nick, s_module_bot_name, "!players    -- Show current players");
-			prefmsg(u->nick, s_module_bot_name, "!turn       -- Show who's turn it is");
-			prefmsg(u->nick, s_module_bot_name, "join        -- Joins the current game");
-			prefmsg(u->nick, s_module_bot_name, "play # # #  -- Plays the card(s) number");
-			prefmsg(u->nick, s_module_bot_name, "!remove     -- Removes you from the current game");
+		if (!ircstrcasecmp (argv[1], "!rules")) {
+			irc_prefmsg (ws_bot, u, "Welcome To War (The Card Game) Ver 1.2 %s", u->name);
+			irc_prefmsg (ws_bot, u, "Written By DeadNotBuried");
+			irc_prefmsg (ws_bot, u, " ");
+			irc_prefmsg (ws_bot, u, "All cards are Dealt out evenly when the game starts.");
+			irc_prefmsg (ws_bot, u, "The Object of the game is to hold ALL the cards.");
+			irc_prefmsg (ws_bot, u, "Each Player plays a card from their hand, and the");
+			irc_prefmsg (ws_bot, u, "highest card wins all cards played that turn.");
+			irc_prefmsg (ws_bot, u, " ");
+			irc_prefmsg (ws_bot, u, "If the played cards are equal, there is a War.");
+			irc_prefmsg (ws_bot, u, "all played cards stay out, and each player involved");
+			irc_prefmsg (ws_bot, u, "in the war plays 3 more cards. the War continues the");
+			irc_prefmsg (ws_bot, u, "same way, untill someone wins all the played cards.");
+			irc_prefmsg (ws_bot, u, " ");
+			irc_prefmsg (ws_bot, u, "If you don't have enough cards to play, your cards are");
+			irc_prefmsg (ws_bot, u, "automatically put into the center, and you surrender.");
+			irc_prefmsg (ws_bot, u, " ");
+			irc_prefmsg (ws_bot, u, "NOTE: Game can't be joined to after play has started.");
+		} else if (!ircstrcasecmp (argv[1], "!whelp")) {
+			irc_prefmsg (ws_bot, u, "Currently available public WarServ commands");
+			irc_prefmsg (ws_bot, u, "===========================================");
+			irc_prefmsg (ws_bot, u, "!whelp      -- Displays this help");
+			irc_prefmsg (ws_bot, u, "!rules      -- displays war rules");
+			irc_prefmsg (ws_bot, u, "!about      -- displays about information");
+			irc_prefmsg (ws_bot, u, "!start      -- Starts a new game");
+			irc_prefmsg (ws_bot, u, "!stop       -- Stops the current game");
+			irc_prefmsg (ws_bot, u, "!players    -- Show current players");
+			irc_prefmsg (ws_bot, u, "!turn       -- Show who's turn it is");
+			irc_prefmsg (ws_bot, u, "join        -- Joins the current game");
+			irc_prefmsg (ws_bot, u, "play # # #  -- Plays the card(s) number");
+			irc_prefmsg (ws_bot, u, "!remove     -- Removes you from the current game");
 			return 1;
-		} else if (!strcasecmp(argv[1], "!about")) {
-			prefmsg(u->nick, s_module_bot_name, "Welcome To War (The Card Game) v1.0 by DeadNotBuried");
+		} else if (!ircstrcasecmp (argv[1], "!about")) {
+			irc_prefmsg (ws_bot, u, "Welcome To War (The Card Game) v1.0 by DeadNotBuried");
 			return 1;
-		} else if (!strcasecmp(argv[1], "!stop")) {
-			 if (strcasecmp(currentwargamestatus, "stopped")) {
-				 privmsg(warroom, s_module_bot_name, "\0039Stopping Current Game");
+		} else if (!ircstrcasecmp (argv[1], "!stop")) {
+			 if (ircstrcasecmp (currentwargamestatus, "stopped")) {
+				 irc_chanprivmsg (ws_bot, warroom, "\0039Stopping Current Game");
 				 stopwar(); 
 			 }
-		} else if (!strcasecmp(argv[1], "!start")) {
-			if (!strcasecmp(currentwargamestatus, "stopped")) {
-				startcountdowntimer(u->nick);
+		} else if (!ircstrcasecmp (argv[1], "!start")) {
+			if (!ircstrcasecmp (currentwargamestatus, "stopped")) {
+				startcountdowntimer(u->name);
 				return 1;
 			} else if (currentwarplayercount < 10) {
-				privmsg(argv[0], s_module_bot_name, "\0034A game has already started \0037%s\0034, Type '\2\003Join\2\0034' To Join in.", u->nick);
+				irc_privmsg (ws_bot, argv[0], "\0034A game has already started \0037%s\0034, Type '\2\003Join\2\0034' To Join in.", u->name);
 				return 1;
 			} else {
-				privmsg(argv[0], s_module_bot_name, "\0034A game has already started \0037%s\0034 and all spots are taken. Please try the next game.", u->nick);
+				irc_privmsg (ws_bot, argv[0], "\0034A game has already started \0037%s\0034 and all spots are taken. Please try the next game.", u->name);
 				return 1;
 			}
-		} else if (!strcasecmp(argv[1], "join") || !strcasecmp(argv[1], "j")) {
-			if (!strcasecmp(currentwargamestatus, "starting")) {
-				joinwar(u->nick);
+		} else if (!ircstrcasecmp (argv[1], "join") || !ircstrcasecmp (argv[1], "j")) {
+			if (!ircstrcasecmp (currentwargamestatus, "starting")) {
+				joinwar(u->name);
 				return 1;
 			}
-		} else if (!strcasecmp(argv[1], "!Remove")) {
-			if (!strcasecmp(currentwargamestatus, "starting") || !strcasecmp(currentwargamestatus, "started")) {
-				removewar(u->nick);
+		} else if (!ircstrcasecmp (argv[1], "!Remove")) {
+			if (!ircstrcasecmp (currentwargamestatus, "starting") || !ircstrcasecmp (currentwargamestatus, "started")) {
+				removewar(u->name);
 				return 1;
 			}
-		} else if (!strcasecmp(argv[1], "!players")) {
-			if (!strcasecmp(currentwargamestatus, "started")) {
-				privmsg(warroom, s_module_bot_name, "\0039Current Players are\0038 :\0037 %s %s %s %s %s %s %s %s %s %s", wplayernick[0], wplayernick[1], wplayernick[2], wplayernick[3], wplayernick[4], wplayernick[5], wplayernick[6], wplayernick[7], wplayernick[8], wplayernick[9]);
+		} else if (!ircstrcasecmp (argv[1], "!players")) {
+			if (!ircstrcasecmp (currentwargamestatus, "started")) {
+				irc_chanprivmsg (ws_bot, warroom, "\0039Current Players are\0038 :\0037 %s %s %s %s %s %s %s %s %s %s", wplayernick[0], wplayernick[1], wplayernick[2], wplayernick[3], wplayernick[4], wplayernick[5], wplayernick[6], wplayernick[7], wplayernick[8], wplayernick[9]);
 				return 1;
 			}
-		} else if (!strcasecmp(argv[1], "!turn")) {
-			if (!strcasecmp(currentwargamestatus, "started")) {
+		} else if (!ircstrcasecmp (argv[1], "!turn")) {
+			if (!ircstrcasecmp (currentwargamestatus, "started")) {
 				if (warinprogress == 1) {
-					privmsg(warroom, s_module_bot_name, "\0039The Current Player is \0037%s\0039 holding\00311 %d\0039 cards, and are currently at \0034WAR\0039 which three would you like to play ?", wplayernick[currentplayer], wplayercardstotal[currentplayer]);
+					irc_chanprivmsg (ws_bot, warroom, "\0039The Current Player is \0037%s\0039 holding\00311 %d\0039 cards, and are currently at \0034WAR\0039 which three would you like to play ?", wplayernick[currentplayer], wplayercardstotal[currentplayer]);
 				} else {
-					privmsg(warroom, s_module_bot_name, "\0039The Current Player is \0037%s\0039 currently holding\00311 %d\0039 cards, which would you like to play ?", wplayernick[currentplayer], wplayercardstotal[currentplayer]);
+					irc_chanprivmsg (ws_bot, warroom, "\0039The Current Player is \0037%s\0039 currently holding\00311 %d\0039 cards, which would you like to play ?", wplayernick[currentplayer], wplayercardstotal[currentplayer]);
 				}
 				return 1;
 			}
 		}
 	} else if (argc > 2) {
-		if ((!strcasecmp(argv[1], "play") || !strcasecmp(argv[1], "p")) && !strcasecmp(u->nick,wplayernick[currentplayer]) && !strcasecmp(currentwargamestatus, "started")) {
+		if ((!ircstrcasecmp (argv[1], "play") || !ircstrcasecmp (argv[1], "p")) && !ircstrcasecmp (u->name,wplayernick[currentplayer]) && !ircstrcasecmp (currentwargamestatus, "started")) {
 			if (warinprogress == 1) {
 				if (argc == 5) {
 					playwarcards(argv[2], argv[3], argv[4]);
@@ -187,9 +174,9 @@ int __ChanMessage(char *origin, char **argv, int argc)
 				}
 			}
 			return 1;
-		} else if (!strcasecmp(argv[1], "!Remove")) {
-			if (!strcasecmp(currentwargamestatus, "starting") || !strcasecmp(currentwargamestatus, "started")) {
-				removewarother(u->nick, argv[2]);
+		} else if (!ircstrcasecmp (argv[1], "!Remove")) {
+			if (!ircstrcasecmp (currentwargamestatus, "starting") || !ircstrcasecmp (currentwargamestatus, "started")) {
+				removewarother(u->name, argv[2]);
 				return 1;
 			}
 		}
@@ -202,111 +189,122 @@ int __ChanMessage(char *origin, char **argv, int argc)
 */
 int __BotMessage(char *origin, char **argv, int argc)
 {
-	User *u;
+	Client *u;
 	char *bufchal;
-	u = finduser(origin);
+	u = find_user (origin);
 	if (!u) {
 		return -1;
 	}
-	if (strcasecmp(argv[0], s_module_bot_name)) {
+	if (ircstrcasecmp (argv[0], ws_bot->name)) {
 		return -1;
 	}
 	if (argc >= 2) {
-		if (!strcasecmp(argv[1], "help")) {
-			prefmsg(u->nick, s_module_bot_name, "Currently available commands are all public commands");
-			prefmsg(u->nick, s_module_bot_name, "To see currently available public commands");
-			prefmsg(u->nick, s_module_bot_name, "type !whelp in the main channel ( %s )", warroom);
+		if (!ircstrcasecmp (argv[1], "help")) {
+			irc_prefmsg (ws_bot, u, "Currently available commands are all public commands");
+			irc_prefmsg (ws_bot, u, "To see currently available public commands");
+			irc_prefmsg (ws_bot, u, "type !whelp in the main channel ( %s )", warroom);
 			if (UserLevel(u) >= NS_ULEVEL_OPER) {
-				prefmsg(u->nick, s_module_bot_name, "\2CHAN <channel>\2 - Swap WarGame Channel to <channel>");
+				irc_prefmsg (ws_bot, u, "\2CHAN <channel>\2 - Swap WarGame Channel to <channel>");
 			}
 			return 1;
-		} else if (!strcasecmp(argv[1], "CHAN") && (UserLevel(u) >= NS_ULEVEL_OPER)) {
-			privmsg(warroom, s_module_bot_name, "%s has moved the Game room to %s, Please Go there now to continue the game", u->nick, argv[2]);
-			chanalert(s_module_bot_name, "%s moved the game to %s", u->nick, argv[2]);
-			spart_cmd(s_module_bot_name, warroom);
-			strlcpy(warroom, argv[2], CHANLEN);
-			sjoin_cmd(s_module_bot_name, warroom);
-			schmode_cmd(s_module_bot_name, warroom, "+o", s_module_bot_name);
-			SET_SEGV_INMODULE("WarServ");
+		} else if (!ircstrcasecmp (argv[1], "CHAN") && (UserLevel(u) >= NS_ULEVEL_OPER)) {
+			irc_chanprivmsg (ws_bot, warroom, "%s has moved the Game room to %s, Please Go there now to continue the game", u->name, argv[2]);
+			irc_chanalert (ws_bot, "%s moved the game to %s", u->name, argv[2]);
+			irc_part (ws_bot, warroom);
+			strlcpy (warroom, argv[2], MAXCHANLEN);
+			irc_join (ws_bot, warroom, NULL);
+			irc_cmode (ws_bot, warroom, "+o", ws_bot->name);
 			SetConf((void *)warroom, CFGSTR, "WarRoom");
 			return NS_SUCCESS;
 		} else {
-			prefmsg(u->nick, s_module_bot_name, "Invalid Command. /msg %s help for more info", s_module_bot_name);
+			irc_prefmsg (ws_bot, u, "Invalid Command. /msg %s help for more info", ws_bot->name);
 		}
 	}
 		
-	prefmsg(u->nick, s_module_bot_name, "'/msg %s help' to list commands", s_module_bot_name);
+	irc_prefmsg (ws_bot, u, "'/msg %s help' to list commands", ws_bot->name);
 	bufchal = joinbuf(argv, argc, 1);
-	chanalert(s_module_bot_name, "\0038Recieved Private Message from\0037 %s\0038 :\003 %s", u->nick, bufchal);
+	irc_chanalert (ws_bot, "\0038Recieved Private Message from\0037 %s\0038 :\003 %s", u->name, bufchal);
 	free(bufchal);
 	return 1;
 }
 
+/** BotInfo */
+static BotInfo ws_botinfo = 
+{
+	"WarServ", 
+	"WarServ1", 
+	"WS", 
+	BOT_COMMON_HOST, 
+	"War Game Service",
+	BOT_FLAG_SERVICEBOT,
+	NULL, 
+	NULL,
+};
+
 /*
  * Online event processing
 */
-int Online(char **av, int ac)
+int ModSynch (void)
 {
 	char *tmp;
 	/* Introduce a bot onto the network */
-	if (init_bot(s_module_bot_name, "WarServ", me.host, "War Game Service", "+oSq",
-		__module_info.module_name) == -1) {
-			/* nick was in use */
-			return 0;
+	ws_bot = AddBot (&ws_botinfo);	
+	if (!ws_bot) {
+		return NS_FAILURE;
 	}
-	srand((unsigned int)time(NULL));
+	srand((unsigned int)me.now);
 	/* channel to play game in */
 	if (GetConf((void *)&tmp, CFGSTR, "WarRoom") <= 0) {
-		strlcpy(warroom, "#Games", CHANLEN);
+		strlcpy (warroom, "#Games", MAXCHANLEN);
 	} else {
-		strlcpy(warroom, tmp, CHANLEN);
+		strlcpy (warroom, tmp, MAXCHANLEN);
 	}
-	chanalert(s_module_bot_name, "Game will start in %s", warroom);
-	sjoin_cmd(s_module_bot_name, warroom);
-	schmode_cmd(s_module_bot_name, warroom, "+o", s_module_bot_name);
-	return 1;
+	irc_chanalert (ws_bot, "Game will start in %s", warroom);
+	irc_join (ws_bot, warroom, NULL);
+	irc_cmode (ws_bot, warroom, "+o", ws_bot->name);
+	return NS_SUCCESS;
 };
 
 /*
  * Nick Change Check
 */
-int PlayerNickChange(char **av, int ac) {
+int PlayerNickChange (CmdParams* cmdparams)
+{
 	if (currentwarplayercount < 1) {
-		return 1;
+		return NS_SUCCESS;
 	}
 	for (wpln = 0; wpln < currentwarplayercount; wpln++) {
-		if (!strcasecmp(wplayernick[wpln], av[0])) {
-			strncpy(wplayernick[wpln], av[1], MAXNICK);
+		if (!ircstrcasecmp (wplayernick[wpln], cmdparams->param)) {
+			strlcpy (wplayernick[wpln], cmdparams->source->name, MAXNICK);
 		}
 	}
+	return NS_SUCCESS;
 }
 
 /*
  * Module event list
 */
-EventFnList __module_events[] = {
-	{EVENT_ONLINE, Online},
-	{EVENT_NICKCHANGE, PlayerNickChange},
-	{NULL, NULL}
+ModuleEvent module_events[] = {
+	{EVENT_NICK, PlayerNickChange},
+	{EVENT_NULL, NULL}
 };
 
 /*
  * Init module
 */
-int __ModInit(int modnum, int apiver)
+int ModInit (Module *mod_ptr)
 {
-	strncpy(s_module_bot_name, "WarServ", MAXNICK);
 	stopwar();
-	return 1;
+	return NS_SUCCESS;
 }
 
 /*
  * Exit module
 */
-void __ModFini()
+void ModFini (void)
 {
-	del_mod_timer("wartimer");
-};
+	del_timer ("startwar");
+}
 
 /*
  * Deal Cards
@@ -366,9 +364,9 @@ int playershufflecards() {
 */
 
 int stopwar() {
-	del_mod_timer("wartimer");
+	del_timer ("startwar");
 	for (wpln = 0; wpln < 10; wpln++) {
-		strncpy(wplayernick[wpln], " ", MAXNICK);
+		strlcpy (wplayernick[wpln], " ", MAXNICK);
 		wplayercardstotal[wpln]= 0;
 		wplayercardplayed[wpln]= 0;
 		wplayeratwar[wpln]= 0;
@@ -386,7 +384,7 @@ int stopwar() {
 	warinprogress= 0;
 	wstackcardscurrent= 0;
 	currentwarplayercount = 0;
-	strncpy(currentwargamestatus, "Stopped", 10);
+	strlcpy (currentwargamestatus, "Stopped", 10);
 	currentplayer= 0;
 	return 1;
 }
@@ -397,9 +395,9 @@ int stopwar() {
 */
 
 int startcountdowntimer(char *nic) {
-	strncpy(currentwargamestatus, "starting", 10);
-	privmsg(warroom, s_module_bot_name, "\0037A new game of \0034WAR\0037 has been started by %s. Game will start in 30 seconds, type '\2\003Join\2\0037' to play.", nic);
-	add_mod_timer("startwar", "wartimer", __module_info.module_name, 30);
+	strlcpy (currentwargamestatus, "starting", 10);
+	irc_chanprivmsg (ws_bot, warroom, "\0037A new game of \0034WAR\0037 has been started by %s. Game will start in 30 seconds, type '\2\003Join\2\0037' to play.", nic);
+	add_timer (TIMER_TYPE_INTERVAL, startwar, "startwar", 30);
 	return 1;
 }
 
@@ -408,26 +406,27 @@ int startcountdowntimer(char *nic) {
  * Initializes variables and starts game
 */
 
-void startwar() {
-	del_mod_timer("wartimer");
-	if (!strcasecmp(currentwargamestatus, "starting")) {
+int startwar(void) 
+{
+	del_timer ("startwar");
+	if (!ircstrcasecmp (currentwargamestatus, "starting")) {
 		if (currentwarplayercount < 1) {
-			privmsg(warroom, s_module_bot_name, "\0034No Players joined to current Game, Exiting");
+			irc_chanprivmsg (ws_bot, warroom, "\0034No Players joined to current Game, Exiting");
 			stopwar();
-			return;
+			return 0;
 		}
 		if (currentwarplayercount < 10) {
-			joinwar(s_module_bot_name);
+			joinwar(ws_bot->name);
 		}
-		privmsg(warroom, s_module_bot_name, "\0034WAR\00310 is now starting, current players are \0037%s %s %s %s %s %s %s %s %s %s", wplayernick[0], wplayernick[1], wplayernick[2], wplayernick[3], wplayernick[4], wplayernick[5], wplayernick[6], wplayernick[7], wplayernick[8], wplayernick[9]);
-		privmsg(warroom, s_module_bot_name, "\0039Shuffling Deck and Dealing Cards");
+		irc_chanprivmsg (ws_bot, warroom, "\0034WAR\00310 is now starting, current players are \0037%s %s %s %s %s %s %s %s %s %s", wplayernick[0], wplayernick[1], wplayernick[2], wplayernick[3], wplayernick[4], wplayernick[5], wplayernick[6], wplayernick[7], wplayernick[8], wplayernick[9]);
+		irc_chanprivmsg (ws_bot, warroom, "\0039Shuffling Deck and Dealing Cards");
 		currentplayer= 0;
-		strncpy(currentwargamestatus, "started", 10);
+		strlcpy (currentwargamestatus, "started", 10);
 		wardealcards();
 		wstackcardscurrent= 0;
 		askplaycard();
 	}
-	return;
+	return 0;
 }
 
 /*
@@ -438,15 +437,15 @@ void startwar() {
 int joinwar(char *nic) {
 	if (currentwarplayercount < 10) {
 		for (wpln = 0; wpln < 10; wpln++) {
-			if (!strcasecmp(wplayernick[wpln], nic)) {
+			if (!ircstrcasecmp (wplayernick[wpln], nic)) {
 				return 1;		
 			}
 		}
-		strncpy(wplayernick[currentwarplayercount], nic, MAXNICK);
+		strlcpy (wplayernick[currentwarplayercount], nic, MAXNICK);
 		currentwarplayercount++;
-		privmsg(warroom, s_module_bot_name, "\0038Welcome to \0034WAR \0037%s", nic);
+		irc_chanprivmsg (ws_bot, warroom, "\0038Welcome to \0034WAR \0037%s", nic);
 	} else {
-		privmsg(warroom, s_module_bot_name, "\0034Sorry all places are filled \0037%s\0034, your welcome to try the next game though", nic);
+		irc_chanprivmsg (ws_bot, warroom, "\0034Sorry all places are filled \0037%s\0034, your welcome to try the next game though", nic);
 	}
 }
 
@@ -456,8 +455,8 @@ int joinwar(char *nic) {
 */
 
 int removewarother(char *nic, char *ntr) {
-	User *u;
-	u = finduser(ntr);
+	Client *u;
+	u = find_user (ntr);
 	if (!u) {
 		removewar(ntr);
 	}
@@ -479,8 +478,8 @@ int removewar(char *nic) {
 		return 1;
 	}
 	for (wpln = 0; wpln < currentwarplayercount; wpln++) {
-		if (!strcasecmp(wplayernick[wpln], nic)) {
-			privmsg(warroom, s_module_bot_name, "\0037%s \0038Removed from the current game of \0034War", nic);
+		if (!ircstrcasecmp (wplayernick[wpln], nic)) {
+			irc_chanprivmsg (ws_bot, warroom, "\0037%s \0038Removed from the current game of \0034War", nic);
 			if (wpln == currentplayer) {
 				tfrpacp= 1;
 			} else if (wpln < currentplayer) {
@@ -494,13 +493,13 @@ int removewar(char *nic) {
 			for (wplnh = wpln; wplnh < currentwarplayercount; wplnh++) {
 				cpfp= (wplnh + 1);
 				if (cpfp == currentwarplayercount) {
-					strncpy(wplayernick[wplnh], " ", MAXNICK);
+					strlcpy (wplayernick[wplnh], " ", MAXNICK);
 					for (wplnht = 0; wplnht < wplayercardstotal[wplnh]; wplnht++) {
 						wplayercardsinhand[wplnh][wplnht]= 0;
 					}
 					wplayercardstotal[wplnh]= 0;
 				} else {
-					strncpy(wplayernick[wplnh], wplayernick[cpfp], MAXNICK);
+					strlcpy (wplayernick[wplnh], wplayernick[cpfp], MAXNICK);
 					for (wplnht = 0; wplnht < 52; wplnht++) {
 						wplayercardsinhand[wplnh][wplnht]= wplayercardsinhand[cpfp][wplnht];
 					}
@@ -511,13 +510,13 @@ int removewar(char *nic) {
 		}
 	}
 	if (currentwarplayercount < 2) {
-		privmsg(warroom, s_module_bot_name, "\0039Stopping Current Game , \0037%s\0039 wins.", wplayernick[0]);
+		irc_chanprivmsg (ws_bot, warroom, "\0039Stopping Current Game , \0037%s\0039 wins.", wplayernick[0]);
 		stopwar();
 	} else if (tfrpacp == 1) {
 		if (currentplayer > (currentwarplayercount - 1)) {
 			currentplayer= 0;
 		}
-		if (strcasecmp(currentwargamestatus, "starting")) {
+		if (ircstrcasecmp (currentwargamestatus, "starting")) {
 			askplaycard();
 		}
 	} else if (tfrpacp == 2) {
@@ -560,7 +559,7 @@ int askplaycard() {
 		if (nwp > currentwarplayercount) {
 			checkwarwinner();
 		} else {
-			if (!strcasecmp(wplayernick[currentplayer], s_module_bot_name)) {
+			if (!ircstrcasecmp (wplayernick[currentplayer], ws_bot->name)) {
 				trn= wplayercardstotal[currentplayer];
 				wspa[2]= ((rand() % trn) + 1);
 				trn--;
@@ -581,15 +580,15 @@ int askplaycard() {
 				}
 				playwarcards(wspas[2], wspas[3], wspas[4]);
 			} else {
-				privmsg(warroom, s_module_bot_name, "\0037%s\0039 you hold\00311 %d\0039 cards, and are currently at \0034WAR\0039 which three would you like to play ?", wplayernick[currentplayer], wplayercardstotal[currentplayer]);
+				irc_chanprivmsg (ws_bot, warroom, "\0037%s\0039 you hold\00311 %d\0039 cards, and are currently at \0034WAR\0039 which three would you like to play ?", wplayernick[currentplayer], wplayercardstotal[currentplayer]);
 			}
 		}
 	} else {
-		if (!strcasecmp(wplayernick[currentplayer], s_module_bot_name)) {
+		if (!ircstrcasecmp (wplayernick[currentplayer], ws_bot->name)) {
 			snprintf(wspas[0], 3, "%d", ((rand() % wplayercardstotal[currentplayer]) + 1));
 			playcard(wspas[0]);
 		} else {
-			privmsg(warroom, s_module_bot_name, "\0037%s\0039 you currently hold\00311 %d\0039 cards, which would you like to play ?", wplayernick[currentplayer], wplayercardstotal[currentplayer]);
+			irc_chanprivmsg (ws_bot, warroom, "\0037%s\0039 you currently hold\00311 %d\0039 cards, which would you like to play ?", wplayernick[currentplayer], wplayercardstotal[currentplayer]);
 		}
 	}
 }
@@ -611,36 +610,36 @@ int playwarcards(char *cnps1, char *cnps2, char *cnps3) {
 		}
 	}
 	if (wplayercardsinhand[currentplayer][(cnp[2] - 1)] < 13) {
-		strncpy(csuitcolour, "\0034", 10);
-		strncpy(csuit, "Hearts", 10);
+		strlcpy (csuitcolour, "\0034", 10);
+		strlcpy (csuit, "Hearts", 10);
 	} else if (wplayercardsinhand[currentplayer][(cnp[2] - 1)] < 26) {
-		strncpy(csuitcolour, "\0037", 10);
-		strncpy(csuit, "Diamonds", 10);
+		strlcpy (csuitcolour, "\0037", 10);
+		strlcpy (csuit, "Diamonds", 10);
 	} else if (wplayercardsinhand[currentplayer][(cnp[2] - 1)] < 39) {
-		strncpy(csuitcolour, "\00314", 10);
-		strncpy(csuit, "Clubs", 10);
+		strlcpy (csuitcolour, "\00314", 10);
+		strlcpy (csuit, "Clubs", 10);
 	} else {
-		strncpy(csuitcolour, "\00315", 10);
-		strncpy(csuit, "Spades", 10);
+		strlcpy (csuitcolour, "\00315", 10);
+		strlcpy (csuit, "Spades", 10);
 	}
 	switch ((wplayercardsinhand[currentplayer][(cnp[2] - 1)] % 13)) {
 		case 12:
-			strncpy(csuitcard, "Ace", 10);
+			strlcpy (csuitcard, "Ace", 10);
 			break;
 		case 11:
-			strncpy(csuitcard, "King", 10);
+			strlcpy (csuitcard, "King", 10);
 			break;
 		case 10:
-			strncpy(csuitcard, "Queen", 10);
+			strlcpy (csuitcard, "Queen", 10);
 			break;
 		case 9:
-			strncpy(csuitcard, "Jack", 10);
+			strlcpy (csuitcard, "Jack", 10);
 			break;
 		default:
 			snprintf(csuitcard, 10, "%d", ((wplayercardsinhand[currentplayer][(cnp[2] - 1)] % 13) + 2));
 			break;
 	}
-	privmsg(warroom, s_module_bot_name, "\0037%s\0039 played Cards\00311 %d , %d , %d \0039(%s %s of %s \0039)", wplayernick[currentplayer], cnp[0], cnp[1], cnp[2], csuitcolour, csuitcard, csuit);
+	irc_chanprivmsg (ws_bot, warroom, "\0037%s\0039 played Cards\00311 %d , %d , %d \0039(%s %s of %s \0039)", wplayernick[currentplayer], cnp[0], cnp[1], cnp[2], csuitcolour, csuitcard, csuit);
 	for (wpln = 0; wpln < 3; wpln++) {
 		cnp[wpln]--;
 		wstackcards[wstackcardscurrent]= wplayercardsinhand[currentplayer][cnp[wpln]];
@@ -677,36 +676,36 @@ int playcard(char *cnps) {
 	cnp = atoi(cnps);
 	if ((cnp > 0) && (cnp < (wplayercardstotal[currentplayer] + 1))){
 		if (wplayercardsinhand[currentplayer][(cnp - 1)] < 13) {
-			strncpy(csuitcolour, "\0034", 10);
-			strncpy(csuit, "Hearts", 10);
+			strlcpy (csuitcolour, "\0034", 10);
+			strlcpy (csuit, "Hearts", 10);
 		} else if (wplayercardsinhand[currentplayer][(cnp - 1)] < 26) {
-			strncpy(csuitcolour, "\0037", 10);
-			strncpy(csuit, "Diamonds", 10);
+			strlcpy (csuitcolour, "\0037", 10);
+			strlcpy (csuit, "Diamonds", 10);
 		} else if (wplayercardsinhand[currentplayer][(cnp - 1)] < 39) {
-			strncpy(csuitcolour, "\00314", 10);
-			strncpy(csuit, "Clubs", 10);
+			strlcpy (csuitcolour, "\00314", 10);
+			strlcpy (csuit, "Clubs", 10);
 		} else {
-			strncpy(csuitcolour, "\00315", 10);
-			strncpy(csuit, "Spades", 10);
+			strlcpy (csuitcolour, "\00315", 10);
+			strlcpy (csuit, "Spades", 10);
 		}
 		switch ((wplayercardsinhand[currentplayer][(cnp - 1)] % 13)) {
 			case 12:
-				strncpy(csuitcard, "Ace", 10);
+				strlcpy (csuitcard, "Ace", 10);
 				break;
 			case 11:
-				strncpy(csuitcard, "King", 10);
+				strlcpy (csuitcard, "King", 10);
 				break;
 			case 10:
-				strncpy(csuitcard, "Queen", 10);
+				strlcpy (csuitcard, "Queen", 10);
 				break;
 			case 9:
-				strncpy(csuitcard, "Jack", 10);
+				strlcpy (csuitcard, "Jack", 10);
 				break;
 			default:
 				snprintf(csuitcard, 10, "%d", ((wplayercardsinhand[currentplayer][(cnp - 1)] % 13) + 2));
 				break;
 		}
-		privmsg(warroom, s_module_bot_name, "\0037%s\0039 played Card\00311 %d \0039(%s %s of %s \0039)", wplayernick[currentplayer], cnp, csuitcolour, csuitcard, csuit);
+		irc_chanprivmsg (ws_bot, warroom, "\0037%s\0039 played Card\00311 %d \0039(%s %s of %s \0039)", wplayernick[currentplayer], cnp, csuitcolour, csuitcard, csuit);
 		cnp--;
 		wstackcards[wstackcardscurrent]= wplayercardsinhand[currentplayer][cnp];
 		wstackcardscurrent++;
@@ -747,9 +746,9 @@ int checkhandwinner() {
 			if (warinprogress == wplayeratwar[wpln]) {
 				if ((wplayercardplayed[wpln] % 13) == hcnp) {
 					if (warinprogress == 1) {
-						privmsg(warroom, s_module_bot_name, "\0037%s\0039 wins the \0034WAR\0039.", wplayernick[wpln]);
+						irc_chanprivmsg (ws_bot, warroom, "\0037%s\0039 wins the \0034WAR\0039.", wplayernick[wpln]);
 					} else {
-						privmsg(warroom, s_module_bot_name, "\0037%s\0039 takes the hand.", wplayernick[wpln]);
+						irc_chanprivmsg (ws_bot, warroom, "\0037%s\0039 takes the hand.", wplayernick[wpln]);
 					}
 					for (wplnh = 0; wplnh < wstackcardscurrent; wplnh++) {
 						wplayercardsinhand[wpln][wplayercardstotal[wpln]]= wstackcards[wplnh];
@@ -765,14 +764,14 @@ int checkhandwinner() {
 		}
 		warinprogress= 0;
 	} else {
-		privmsg(warroom, s_module_bot_name, "\0034WAR DECLARED");
+		irc_chanprivmsg (ws_bot, warroom, "\0034WAR DECLARED");
 		for (wpln = 0; wpln < currentwarplayercount; wpln++) {
 			if (warinprogress == wplayeratwar[wpln]) {
 				wplayeratwar[wpln] = 0;
 				if ((wplayercardplayed[wpln] % 13) == hcnp) {
 					wplayeratwar[wpln]= 1;
 					if (wplayercardstotal[wpln] < 3) {
-						privmsg(warroom, s_module_bot_name, "\0037%s\0038 Surrenders\0039 (Insufficient Cards)", wplayernick[wpln]);
+						irc_chanprivmsg (ws_bot, warroom, "\0037%s\0038 Surrenders\0039 (Insufficient Cards)", wplayernick[wpln]);
 						hcnpt--;
 						removewar(wplayernick[wpln]);
 						if (currentwarplayercount < 2) {
