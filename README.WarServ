@@ -29,12 +29,12 @@ _________________________________________________________________
 
 1. Prerequisites and Installation.
 
-   WarServ is designed to run on Top of NeoStats.
+   WarServ is designed to run on Top of NeoStats 3.
    Please  refer  to  the  NeoStats website  for more
    information on the requirements for NeoStats.
 
    WarServ requires the following:
-     * NeoStats 2.5.15 or Higher correctly installed and Running
+     * NeoStats 3.0 or Higher correctly installed and Running
      * The time to read this entire document.
 
 
@@ -52,22 +52,22 @@ bash$ tar -xzf WarServ-<ver>.tar.gz
 bash$./configure [--with-neostats=<dir>]
 
    --with-neostats=<dir> should be used if your neostats directory is not
-   in a standard location (~/NeoStats/). Replace <dir> with the full path
+   in a standard location (~/NeoStats3.0/). Replace <dir> with the full path
    to your NeoStats installation directory (NOT SOURCE DIRECTORY)
 
    If  the  configuration did not produce a error, you may then move onto
    Compiling  WarServ.  Compiling  is simply just issuing the "make" command
    (or "gmake" if you are running BSD):
 
-   Again,  check  for  Error  messages.  As  long  as there are not error
-   messages,  "make install" will install WarServ, this README file, and any
-   auxiluary files needed into your NeoStats directory:
+   Again,  check  for  Error  messages.  As  long  as there are not error messages,
+   "make install" (or "gmake" if you are running BSD) will install WarServ, this
+   README file, and any auxiluary files needed into your NeoStats directory:
 
    Once  Installation  is  complete, you can either configure NeoStats to
    load WarServ when it starts, or load WarServ via IRC.
 
    To  Configure  NeoStats  to automatically load WarServ when it boots, add
-   the  following  line  to  your  "neostats.cfg"  file  in  the NeoStats
+   the  following  line  to  your  "neostats.conf"  file  in  the NeoStats
    directory:
 
    LOAD_MODULE WarServ
@@ -83,17 +83,19 @@ bash$./configure [--with-neostats=<dir>]
 2. Basic Configuration
 
    The Channel WarServ  plays in is configured online via IRC. When you
-   first start up WarServ,  it  defaults to playing in "#Games", to change the
-   channel use the following command:
+   first start up WarServ,  it  defaults to playing in "#Games_War", to
+   change the channel use the following command:
 
-   /msg warserv chan <#channel>
+   /msg warserv set chan <#channel>
 
    The new channel name will be saved for future reference, and WarServ
    will message the current channel telling those there where it is moving
    to, and will part the old channel and join the new one.
 
+   NOTE: if a game is in progress the set chan command will not work.
+
 3. Operational Commands
 
    WarServ  has  a  number  of  commands  to play the game in channel.
-   To list the commands send the text "!whelp"  to the channel WarServ
+   To list the commands send the text "!help"  to the channel WarServ
    is set to play in.
