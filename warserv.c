@@ -236,7 +236,7 @@ int BotMessage (CmdParams* cmdparams)
 		} else if (!ircstrcasecmp (argv[0], "CHAN") && (UserLevel(cmdparams->source) >= NS_ULEVEL_OPER)) {
 			irc_chanprivmsg (ws_bot, warroom, "%s has moved the Game room to %s, Please Go there now to continue the game", cmdparams->source->name, argv[1]);
 			irc_chanalert (ws_bot, "%s moved the game to %s", cmdparams->source->name, argv[1]);
-			irc_part (ws_bot, warroom);
+			irc_part( ws_bot, warroom, NULL );
 			strlcpy (warroom, argv[1], MAXCHANLEN);
 			irc_join (ws_bot, warroom, NULL);
 			irc_cmode (ws_bot, warroom, "+o", ws_bot->name);
