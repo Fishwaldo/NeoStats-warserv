@@ -1,6 +1,5 @@
 /* WarServ - War Card Game Service - NeoStats Addon Module
-** Copyright (c) 2004-2005 DeadNotBuried
-** Portions Copyright (c) 1999-2005, NeoStats
+** Copyright (c) 2004-2005 Justin Hammond, Mark Hetherington, DeadNotBuried
 **
 **  This program is free software; you can redistribute it and/or modify
 **  it under the terms of the GNU General Public License as published by
@@ -31,8 +30,7 @@
 
 /** Copyright info */
 const char *ws_copyright[] = {
-	"Copyright (c) 2004-2005 DeadNotBuried",
-	"Portions Copyright (c) 1999-2005, NeoStats",
+	"Copyright (c) 2004-2005 Justin Hammond, Mark Hetherington, DeadNotBuried",
 	NULL
 };
 
