@@ -1,5 +1,8 @@
 WarServ ChangeLog
 =============================================================================
+3.0.a2-dev - Mark (M)
+ - Update settings table to a2 compatible format. (M)
+
 3.0.a1 - Mark (M)
  - Port to 3.0 API and Win32. (M)
 

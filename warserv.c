@@ -73,8 +73,8 @@ static bot_cmd ws_commands[]=
 
 static bot_setting ws_settings[]=
 {
-	{"CHAN",	&warroom,	SET_TYPE_CHANNEL,	0,	MAXCHANLEN,	NS_ULEVEL_ADMIN,	"warroom",	NULL,	ws_help_set_chan,	ws_cmd_set_chan,	(void *)"#Games_War" },
-	{NULL,		NULL,		0,			0,	0,		0,			NULL,		NULL,	NULL, 			NULL },
+	{"CHAN",	&warroom,	SET_TYPE_CHANNEL,	0,	MAXCHANLEN,	NS_ULEVEL_ADMIN,	NULL,	ws_help_set_chan,	ws_cmd_set_chan,	(void *)"#Games_War" },
+	{NULL,		NULL,		0,			0,	0,		0,			NULL,		NULL, 			NULL },
 };
 
 
