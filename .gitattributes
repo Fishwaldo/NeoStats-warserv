@@ -1,0 +1,13 @@
+* text=auto !eol
+/AUTHORS -text
+/COPYING -text
+/ChangeLog -text
+/LICENSE -text
+/Makefile.in -text
+/NEWS -text
+/README.WarServ -text
+/configure -text
+/configure.in -text
+/install-sh -text
+/modconfig.h.in -text
+/warserv.c -text
