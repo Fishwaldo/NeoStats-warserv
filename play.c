@@ -82,7 +82,7 @@ int startwar(void)
 			irc_chanprivmsg (ws_bot, warroom, "\0034No Players joined to current Game, Exiting");
 			currentwargamestatus = WS_GAME_STOPPING;
 			stopwar();
-			return;
+			return NS_SUCCESS;
 		}
 		if (currentwarplayercount < 10) {
 			joinwar(ws_bot->name);
@@ -95,7 +95,7 @@ int startwar(void)
 		wstackcardscurrent= 0;
 		askplaycard();
 	}
-	return;
+	return NS_SUCCESS;
 }
 
 /*
