@@ -60,15 +60,23 @@ int StartWarGame (CmdParams* cmdparams)
 */
 int StopWarGame (CmdParams* cmdparams)
 {
-	 if (currentwargamestatus != WS_GAME_STOPPED) {
-		for (wpln = 0; wpln < currentwarplayercount; wpln++) {
-			if (!ircstrcasecmp (wplayernick[wpln], cmdparams->source->name)) {
-				irc_chanprivmsg (ws_bot, warroom, "\0039Stopping Current Game (\0037%s\0039)", cmdparams->source->name);
-				stopwar();
-				wpln = currentwarplayercount;
+	if (currentwargamestatus != WS_GAME_STOPPED) {
+		if (cmdparams->source->user->ulevel >= NS_ULEVEL_OPER) {
+			irc_chanprivmsg (ws_bot, warroom, "\0039Stopping Current Game (\0037%s\0039)", cmdparams->source->name);
+			stopwar();
+			wpln = currentwarplayercount;
+			return NS_SUCCESS;
+		} else {
+			for (wpln = 0; wpln < currentwarplayercount; wpln++) {
+				if (!ircstrcasecmp (wplayernick[wpln], cmdparams->source->name)) {
+					irc_chanprivmsg (ws_bot, warroom, "\0039Stopping Current Game (\0037%s\0039)", cmdparams->source->name);
+					stopwar();
+					wpln = currentwarplayercount;
+					return NS_SUCCESS;
+				}
 			}
 		}
-	 }
+	}
 	return NS_SUCCESS;
 }
 
@@ -95,7 +103,7 @@ int RemoveWarGame (CmdParams* cmdparams)
 			/* allows removal of a player by anyone
 			 * if player no longer connected to ircd */
 			u = FindUser(cmdparams->av[0]);
-			if (!u) {
+			if (!u || cmdparams->source->user->ulevel >= NS_ULEVEL_OPER) {
 				removewar(u->name);
 			}		
 		} else {

@@ -52,6 +52,8 @@ const char *ws_help_stop[] = {
 	"",
 	"Stops Currently Running War Game.",
 	"Only Available to a Current PLayer.",
+	"",
+	"NOTE: May be used at any time by a Global IRCop.",
 	NULL
 };
 
@@ -70,6 +72,9 @@ const char *ws_help_remove[] = {
 	"",
 	"With Nick specified, removes Nick from the curent Game, as",
 	"long as Nick is no longer connected to the network.",
+	"",
+	"NOTE: Global IRCop's may remove players even",
+	"if the player is connected to the network.",
 	NULL
 };
 
