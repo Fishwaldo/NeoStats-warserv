@@ -832,3 +832,11 @@ int clearstack() {
 	}
 	wstackcardscurrent= 0;
 }
+
+#ifdef WIN32 /* temp */
+
+int main (int argc, char **argv)
+{
+	return 0;
+}
+#endif
