@@ -69,7 +69,7 @@ const char *ws_help_remove[] = {
 	"With No Nick specified, removes you from the current game.",
 	"",
 	"With Nick specified, removes Nick from the curent Game, as",
-	"as Nick is no longer connected to the network.",
+	"long as Nick is no longer connected to the network.",
 	NULL
 };
 
