@@ -43,7 +43,9 @@ char csuitcolour[10];
 char csuitcard[10];
 
 int startwar(void);
-
+int PlayerNickChange (CmdParams* cmdparams);
+int ChanMessage (CmdParams* cmdparams);
+int BotMessage (CmdParams* cmdparams);
 
 /** Copyright info */
 const char *ws_copyright[] = {
@@ -69,162 +71,188 @@ ModuleInfo module_info = {
 };
 
 /*
+ * Module event list
+*/
+ModuleEvent module_events[] = {
+	{EVENT_NICK, PlayerNickChange},
+	{EVENT_PRIVATE, BotMessage},
+	{EVENT_CPRIVATE, ChanMessage},		
+	{EVENT_NULL, NULL}
+};
+
+/*
  * Channel message processing
 */
-int __ChanMessage(char *origin, char **argv, int argc)
+int ChanMessage (CmdParams* cmdparams)
 {
-	Client *u;
+	static char line[512];
+	int argc;
+	char **argv;
+
+	strlcpy (line, cmdparams->param, 512);
+	argc = split_buf (line, &argv, 0);
 
 	if (argc < 1) {
+		free (argv);
 		return -1;
 	}
-	if (ircstrcasecmp (argv[0], warroom)) {
+	if (ircstrcasecmp (cmdparams->channel->name, warroom)) {
+		free (argv);
 		return -1;
 	}
-	u = find_user (origin);
-	if (!u) {
-		return -1;
-	}
-	if (argc == 2) {
-		if (!ircstrcasecmp (argv[1], "!rules")) {
-			irc_prefmsg (ws_bot, u, "Welcome To War (The Card Game) Ver 1.2 %s", u->name);
-			irc_prefmsg (ws_bot, u, "Written By DeadNotBuried");
-			irc_prefmsg (ws_bot, u, " ");
-			irc_prefmsg (ws_bot, u, "All cards are Dealt out evenly when the game starts.");
-			irc_prefmsg (ws_bot, u, "The Object of the game is to hold ALL the cards.");
-			irc_prefmsg (ws_bot, u, "Each Player plays a card from their hand, and the");
-			irc_prefmsg (ws_bot, u, "highest card wins all cards played that turn.");
-			irc_prefmsg (ws_bot, u, " ");
-			irc_prefmsg (ws_bot, u, "If the played cards are equal, there is a War.");
-			irc_prefmsg (ws_bot, u, "all played cards stay out, and each player involved");
-			irc_prefmsg (ws_bot, u, "in the war plays 3 more cards. the War continues the");
-			irc_prefmsg (ws_bot, u, "same way, untill someone wins all the played cards.");
-			irc_prefmsg (ws_bot, u, " ");
-			irc_prefmsg (ws_bot, u, "If you don't have enough cards to play, your cards are");
-			irc_prefmsg (ws_bot, u, "automatically put into the center, and you surrender.");
-			irc_prefmsg (ws_bot, u, " ");
-			irc_prefmsg (ws_bot, u, "NOTE: Game can't be joined to after play has started.");
-		} else if (!ircstrcasecmp (argv[1], "!whelp")) {
-			irc_prefmsg (ws_bot, u, "Currently available public WarServ commands");
-			irc_prefmsg (ws_bot, u, "===========================================");
-			irc_prefmsg (ws_bot, u, "!whelp      -- Displays this help");
-			irc_prefmsg (ws_bot, u, "!rules      -- displays war rules");
-			irc_prefmsg (ws_bot, u, "!about      -- displays about information");
-			irc_prefmsg (ws_bot, u, "!start      -- Starts a new game");
-			irc_prefmsg (ws_bot, u, "!stop       -- Stops the current game");
-			irc_prefmsg (ws_bot, u, "!players    -- Show current players");
-			irc_prefmsg (ws_bot, u, "!turn       -- Show who's turn it is");
-			irc_prefmsg (ws_bot, u, "join        -- Joins the current game");
-			irc_prefmsg (ws_bot, u, "play # # #  -- Plays the card(s) number");
-			irc_prefmsg (ws_bot, u, "!remove     -- Removes you from the current game");
+	if (argc == 1) {
+		if (!ircstrcasecmp (argv[0], "!rules")) {
+			irc_prefmsg (ws_bot, cmdparams->source, "Welcome To War (The Card Game) Ver 1.2 %s", cmdparams->source->name);
+			irc_prefmsg (ws_bot, cmdparams->source, "Written By DeadNotBuried");
+			irc_prefmsg (ws_bot, cmdparams->source, " ");
+			irc_prefmsg (ws_bot, cmdparams->source, "All cards are Dealt out evenly when the game starts.");
+			irc_prefmsg (ws_bot, cmdparams->source, "The Object of the game is to hold ALL the cards.");
+			irc_prefmsg (ws_bot, cmdparams->source, "Each Player plays a card from their hand, and the");
+			irc_prefmsg (ws_bot, cmdparams->source, "highest card wins all cards played that turn.");
+			irc_prefmsg (ws_bot, cmdparams->source, " ");
+			irc_prefmsg (ws_bot, cmdparams->source, "If the played cards are equal, there is a War.");
+			irc_prefmsg (ws_bot, cmdparams->source, "all played cards stay out, and each player involved");
+			irc_prefmsg (ws_bot, cmdparams->source, "in the war plays 3 more cards. the War continues the");
+			irc_prefmsg (ws_bot, cmdparams->source, "same way, untill someone wins all the played cards.");
+			irc_prefmsg (ws_bot, cmdparams->source, " ");
+			irc_prefmsg (ws_bot, cmdparams->source, "If you don't have enough cards to play, your cards are");
+			irc_prefmsg (ws_bot, cmdparams->source, "automatically put into the center, and you surrender.");
+			irc_prefmsg (ws_bot, cmdparams->source, " ");
+			irc_prefmsg (ws_bot, cmdparams->source, "NOTE: Game can't be joined to after play has started.");
+		} else if (!ircstrcasecmp (argv[0], "!whelp")) {
+			irc_prefmsg (ws_bot, cmdparams->source, "Currently available public WarServ commands");
+			irc_prefmsg (ws_bot, cmdparams->source, "===========================================");
+			irc_prefmsg (ws_bot, cmdparams->source, "!whelp      -- Displays this help");
+			irc_prefmsg (ws_bot, cmdparams->source, "!rules      -- displays war rules");
+			irc_prefmsg (ws_bot, cmdparams->source, "!about      -- displays about information");
+			irc_prefmsg (ws_bot, cmdparams->source, "!start      -- Starts a new game");
+			irc_prefmsg (ws_bot, cmdparams->source, "!stop       -- Stops the current game");
+			irc_prefmsg (ws_bot, cmdparams->source, "!players    -- Show current players");
+			irc_prefmsg (ws_bot, cmdparams->source, "!turn       -- Show who's turn it is");
+			irc_prefmsg (ws_bot, cmdparams->source, "join        -- Joins the current game");
+			irc_prefmsg (ws_bot, cmdparams->source, "play # # #  -- Plays the card(s) number");
+			irc_prefmsg (ws_bot, cmdparams->source, "!remove     -- Removes you from the current game");
+			free (argv);
 			return 1;
-		} else if (!ircstrcasecmp (argv[1], "!about")) {
-			irc_prefmsg (ws_bot, u, "Welcome To War (The Card Game) v1.0 by DeadNotBuried");
+		} else if (!ircstrcasecmp (argv[0], "!about")) {
+			irc_prefmsg (ws_bot, cmdparams->source, "Welcome To War (The Card Game) v1.0 by DeadNotBuried");
+			free (argv);
 			return 1;
-		} else if (!ircstrcasecmp (argv[1], "!stop")) {
+		} else if (!ircstrcasecmp (argv[0], "!stop")) {
 			 if (ircstrcasecmp (currentwargamestatus, "stopped")) {
 				 irc_chanprivmsg (ws_bot, warroom, "\0039Stopping Current Game");
 				 stopwar(); 
 			 }
-		} else if (!ircstrcasecmp (argv[1], "!start")) {
+		} else if (!ircstrcasecmp (argv[0], "!start")) {
 			if (!ircstrcasecmp (currentwargamestatus, "stopped")) {
-				startcountdowntimer(u->name);
+				startcountdowntimer(cmdparams->source->name);
+				free (argv);
 				return 1;
 			} else if (currentwarplayercount < 10) {
-				irc_privmsg (ws_bot, argv[0], "\0034A game has already started \0037%s\0034, Type '\2\003Join\2\0034' To Join in.", u->name);
+				irc_privmsg (ws_bot, cmdparams->source, "\0034A game has already started \0037%s\0034, Type '\2\003Join\2\0034' To Join in.", cmdparams->source->name);
+				free (argv);
 				return 1;
 			} else {
-				irc_privmsg (ws_bot, argv[0], "\0034A game has already started \0037%s\0034 and all spots are taken. Please try the next game.", u->name);
+				irc_privmsg (ws_bot, cmdparams->source, "\0034A game has already started \0037%s\0034 and all spots are taken. Please try the next game.", cmdparams->source->name);
+				free (argv);
 				return 1;
 			}
-		} else if (!ircstrcasecmp (argv[1], "join") || !ircstrcasecmp (argv[1], "j")) {
+		} else if (!ircstrcasecmp (argv[0], "join") || !ircstrcasecmp (argv[0], "j")) {
 			if (!ircstrcasecmp (currentwargamestatus, "starting")) {
-				joinwar(u->name);
+				joinwar(cmdparams->source->name);
+				free (argv);
 				return 1;
 			}
-		} else if (!ircstrcasecmp (argv[1], "!Remove")) {
+		} else if (!ircstrcasecmp (argv[0], "!Remove")) {
 			if (!ircstrcasecmp (currentwargamestatus, "starting") || !ircstrcasecmp (currentwargamestatus, "started")) {
-				removewar(u->name);
+				removewar(cmdparams->source->name);
+				free (argv);
 				return 1;
 			}
-		} else if (!ircstrcasecmp (argv[1], "!players")) {
+		} else if (!ircstrcasecmp (argv[0], "!players")) {
 			if (!ircstrcasecmp (currentwargamestatus, "started")) {
 				irc_chanprivmsg (ws_bot, warroom, "\0039Current Players are\0038 :\0037 %s %s %s %s %s %s %s %s %s %s", wplayernick[0], wplayernick[1], wplayernick[2], wplayernick[3], wplayernick[4], wplayernick[5], wplayernick[6], wplayernick[7], wplayernick[8], wplayernick[9]);
+				free (argv);
 				return 1;
 			}
-		} else if (!ircstrcasecmp (argv[1], "!turn")) {
+		} else if (!ircstrcasecmp (argv[0], "!turn")) {
 			if (!ircstrcasecmp (currentwargamestatus, "started")) {
 				if (warinprogress == 1) {
 					irc_chanprivmsg (ws_bot, warroom, "\0039The Current Player is \0037%s\0039 holding\00311 %d\0039 cards, and are currently at \0034WAR\0039 which three would you like to play ?", wplayernick[currentplayer], wplayercardstotal[currentplayer]);
 				} else {
 					irc_chanprivmsg (ws_bot, warroom, "\0039The Current Player is \0037%s\0039 currently holding\00311 %d\0039 cards, which would you like to play ?", wplayernick[currentplayer], wplayercardstotal[currentplayer]);
 				}
+				free (argv);
 				return 1;
 			}
 		}
-	} else if (argc > 2) {
-		if ((!ircstrcasecmp (argv[1], "play") || !ircstrcasecmp (argv[1], "p")) && !ircstrcasecmp (u->name,wplayernick[currentplayer]) && !ircstrcasecmp (currentwargamestatus, "started")) {
+	} else if (argc > 1) {
+		if ((!ircstrcasecmp (argv[0], "play") || !ircstrcasecmp (argv[0], "p")) && !ircstrcasecmp (cmdparams->source->name,wplayernick[currentplayer]) && !ircstrcasecmp (currentwargamestatus, "started")) {
 			if (warinprogress == 1) {
-				if (argc == 5) {
-					playwarcards(argv[2], argv[3], argv[4]);
+				if (argc == 4) {
+					playwarcards(argv[1], argv[2], argv[3]);
 				}
 			} else {
-				if (argc == 3) {
-					playcard(argv[2]);
+				if (argc == 2) {
+					playcard(argv[1]);
 				}
 			}
+			free (argv);
 			return 1;
-		} else if (!ircstrcasecmp (argv[1], "!Remove")) {
+		} else if (!ircstrcasecmp (argv[0], "!Remove")) {
 			if (!ircstrcasecmp (currentwargamestatus, "starting") || !ircstrcasecmp (currentwargamestatus, "started")) {
-				removewarother(u->name, argv[2]);
-				return 1;
+				removewarother(cmdparams->source->name, argv[1]);
+				free (argv);
 			}
 		}
 	}
+	free (argv);
 	return 1;
 }
 
 /*
  * private message processing
 */
-int __BotMessage(char *origin, char **argv, int argc)
+int BotMessage (CmdParams* cmdparams)
 {
-	Client *u;
 	char *bufchal;
-	u = find_user (origin);
-	if (!u) {
-		return -1;
-	}
-	if (ircstrcasecmp (argv[0], ws_bot->name)) {
-		return -1;
-	}
-	if (argc >= 2) {
-		if (!ircstrcasecmp (argv[1], "help")) {
-			irc_prefmsg (ws_bot, u, "Currently available commands are all public commands");
-			irc_prefmsg (ws_bot, u, "To see currently available public commands");
-			irc_prefmsg (ws_bot, u, "type !whelp in the main channel ( %s )", warroom);
-			if (UserLevel(u) >= NS_ULEVEL_OPER) {
-				irc_prefmsg (ws_bot, u, "\2CHAN <channel>\2 - Swap WarGame Channel to <channel>");
+	static char line[512];
+	int argc;
+	char **argv;
+
+	strlcpy (line, cmdparams->param, 512);
+	argc = split_buf (line, &argv, 0);
+
+	if (argc >= 1) {
+		if (!ircstrcasecmp (argv[0], "help")) {
+			irc_prefmsg (ws_bot, cmdparams->source, "Currently available commands are all public commands");
+			irc_prefmsg (ws_bot, cmdparams->source, "To see currently available public commands");
+			irc_prefmsg (ws_bot, cmdparams->source, "type !whelp in the main channel ( %s )", warroom);
+			if (UserLevel(cmdparams->source) >= NS_ULEVEL_OPER) {
+				irc_prefmsg (ws_bot, cmdparams->source, "\2CHAN <channel>\2 - Swap WarGame Channel to <channel>");
 			}
+			free (argv);
 			return 1;
-		} else if (!ircstrcasecmp (argv[1], "CHAN") && (UserLevel(u) >= NS_ULEVEL_OPER)) {
-			irc_chanprivmsg (ws_bot, warroom, "%s has moved the Game room to %s, Please Go there now to continue the game", u->name, argv[2]);
-			irc_chanalert (ws_bot, "%s moved the game to %s", u->name, argv[2]);
+		} else if (!ircstrcasecmp (argv[0], "CHAN") && (UserLevel(cmdparams->source) >= NS_ULEVEL_OPER)) {
+			irc_chanprivmsg (ws_bot, warroom, "%s has moved the Game room to %s, Please Go there now to continue the game", cmdparams->source->name, argv[1]);
+			irc_chanalert (ws_bot, "%s moved the game to %s", cmdparams->source->name, argv[1]);
 			irc_part (ws_bot, warroom);
-			strlcpy (warroom, argv[2], MAXCHANLEN);
+			strlcpy (warroom, argv[1], MAXCHANLEN);
 			irc_join (ws_bot, warroom, NULL);
 			irc_cmode (ws_bot, warroom, "+o", ws_bot->name);
 			SetConf((void *)warroom, CFGSTR, "WarRoom");
+			free (argv);
 			return NS_SUCCESS;
 		} else {
-			irc_prefmsg (ws_bot, u, "Invalid Command. /msg %s help for more info", ws_bot->name);
+			irc_prefmsg (ws_bot, cmdparams->source, "Invalid Command. /msg %s help for more info", ws_bot->name);
 		}
 	}
 		
-	irc_prefmsg (ws_bot, u, "'/msg %s help' to list commands", ws_bot->name);
-	bufchal = joinbuf(argv, argc, 1);
-	irc_chanalert (ws_bot, "\0038Recieved Private Message from\0037 %s\0038 :\003 %s", u->name, bufchal);
+	irc_prefmsg (ws_bot, cmdparams->source, "'/msg %s help' to list commands", ws_bot->name);
+	bufchal = joinbuf(argv, argc, 0);
+	irc_chanalert (ws_bot, "\0038Recieved Private Message from\0037 %s\0038 :\003 %s", cmdparams->source->name, bufchal);
 	free(bufchal);
+	free (argv);
 	return 1;
 }
 
@@ -280,14 +308,6 @@ int PlayerNickChange (CmdParams* cmdparams)
 	}
 	return NS_SUCCESS;
 }
-
-/*
- * Module event list
-*/
-ModuleEvent module_events[] = {
-	{EVENT_NICK, PlayerNickChange},
-	{EVENT_NULL, NULL}
-};
 
 /*
  * Init module
@@ -598,9 +618,7 @@ int askplaycard() {
 */
 
 int playwarcards(char *cnps1, char *cnps2, char *cnps3) {
-	int ncob;
 	int cnp[3];
-	char *tempint;
 	cnp[0] = atoi(cnps1);
 	cnp[1] = atoi(cnps2);
 	cnp[2] = atoi(cnps3);
