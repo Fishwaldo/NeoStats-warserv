@@ -46,10 +46,9 @@ char csuit[10];
 char csuitcolour[10];
 char csuitcard[10];
 
-/** Module Info definition 
- * version information about our module
- * This structure is required for your module to load and run on NeoStats
- */
+/*
+ * Module Info definition 
+*/
 ModuleInfo __module_info = {
 	"WarServ",
 	"War Card Game Module For NeoStats",
@@ -58,10 +57,9 @@ ModuleInfo __module_info = {
 	__TIME__
 };
 
-/** printf version information
- * respond to the /VERSION command on IRC with this text
- * This is recommended for your module to load and run on NeoStats
- */
+/*
+ * respond to the /VERSION command
+*/
 int new_m_version(char *origin, char **av, int ac)
 {
 	snumeric_cmd(351, origin, "Module WarServ Loaded, Version: %s %s %s",
@@ -70,12 +68,9 @@ int new_m_version(char *origin, char **av, int ac)
 	return 0;
 }
 
-/** Module function list
- * A list of IRCd (server) commands that we will respond to
- * e.g. VERSION
- * This table is required for your module to load and run on NeoStats
- * but you do not have to have any functions in it
- */
+/*
+ * Module function list
+*/
 Functions __module_functions[] = {
 	{MSG_VERSION, new_m_version, 1},
 #ifdef HAVE_TOKEN_SUP
@@ -84,10 +79,9 @@ Functions __module_functions[] = {
 	{NULL, NULL, 0}
 };
 
-/** Channel message processing
- * What do we do with messages in channels
- * This is required if you want your module to respond to channel messages
- */
+/*
+ * Channel message processing
+*/
 int __ChanMessage(char *origin, char **argv, int argc)
 {
 	char *tsptr;
@@ -203,10 +197,9 @@ int __ChanMessage(char *origin, char **argv, int argc)
 	return 1;
 }
 
-/** Bot message processing
- * What do we do with messages sent to our bot with /mag
- * This is required if you want your module to respond to /msg
- */
+/*
+ * private message processing
+*/
 int __BotMessage(char *origin, char **argv, int argc)
 {
 	User *u;
@@ -249,9 +242,9 @@ int __BotMessage(char *origin, char **argv, int argc)
 	return 1;
 }
 
-/** Online event processing
- * What we do when we first come online
- */
+/*
+ * Online event processing
+*/
 int Online(char **av, int ac)
 {
 	char *tmp;
@@ -276,7 +269,7 @@ int Online(char **av, int ac)
 
 /*
  * Nick Change Check
- */
+*/
 int PlayerNickChange(char **av, int ac) {
 	if (currentwarplayercount < 1) {
 		return 1;
@@ -288,21 +281,18 @@ int PlayerNickChange(char **av, int ac) {
 	}
 }
 
-/** Module event list
- * What events we will act on
- * This is required if you want your module to respond to events on IRC
- * see modules.txt for a list of all events available
- */
+/*
+ * Module event list
+*/
 EventFnList __module_events[] = {
 	{EVENT_ONLINE, Online},
 	{EVENT_NICKCHANGE, PlayerNickChange},
 	{NULL, NULL}
 };
 
-/** Init module
- * This is required if you need to do initialisation of your module when
- * first loaded
- */
+/*
+ * Init module
+*/
 int __ModInit(int modnum, int apiver)
 {
 	strncpy(s_module_bot_name, "WarServ", MAXNICK);
@@ -310,9 +300,9 @@ int __ModInit(int modnum, int apiver)
 	return 1;
 }
 
-/** Exit module
- * This is required if you need to do cleanup of your module when it ends
- */
+/*
+ * Exit module
+*/
 void __ModFini()
 {
 	del_mod_timer("wartimer");
@@ -474,7 +464,7 @@ int removewarother(char *nic, char *ntr) {
 }
 
 /*
- * Remove PLayer
+ * Remove Player
  * removes player from game and adds any cards they have to the stack
 */
 
@@ -490,6 +480,7 @@ int removewar(char *nic) {
 	}
 	for (wpln = 0; wpln < currentwarplayercount; wpln++) {
 		if (!strcasecmp(wplayernick[wpln], nic)) {
+			privmsg(warroom, s_module_bot_name, "\0037%s \0038Removed from the current game of \0034War", nic);
 			if (wpln == currentplayer) {
 				tfrpacp= 1;
 			} else if (wpln < currentplayer) {
@@ -517,7 +508,6 @@ int removewar(char *nic) {
 				}
 			}
 			currentwarplayercount--;
-			privmsg(warroom, s_module_bot_name, "\0037%s \0038Removed from the current game of \0034War", nic);
 		}
 	}
 	if (currentwarplayercount < 2) {
@@ -565,6 +555,7 @@ int askplaycard() {
 					wpln= currentwarplayercount;
 				}
 			}
+			currentplayer = nwp;
 		}
 		if (nwp > currentwarplayercount) {
 			checkwarwinner();
@@ -608,6 +599,7 @@ int askplaycard() {
 */
 
 int playwarcards(char *cnps1, char *cnps2, char *cnps3) {
+	int ncob;
 	int cnp[3];
 	char *tempint;
 	cnp[0] = atoi(cnps1);
@@ -654,6 +646,14 @@ int playwarcards(char *cnps1, char *cnps2, char *cnps3) {
 		wstackcards[wstackcardscurrent]= wplayercardsinhand[currentplayer][cnp[wpln]];
 		wstackcardscurrent++;
 		wplayerwarcardsplayed[currentplayer][wpln]= wplayercardsinhand[currentplayer][cnp[wpln]];
+	}
+	if (cnp[2] > cnp[0])
+		cnp[2]--;
+	if (cnp[2] > cnp[1])
+		cnp[2]--;
+	if (cnp[1] > cnp[0])
+		cnp[1]--;
+	for (wpln = 0; wpln < 3; wpln++) {
 		wplayercardstotal[currentplayer]--;
 		for (wplnh = cnp[wpln]; wplnh < wplayercardstotal[currentplayer]; wplnh++) {
 			wplayercardsinhand[currentplayer][wplnh]= wplayercardsinhand[currentplayer][(wplnh +1)];
@@ -767,17 +767,19 @@ int checkhandwinner() {
 	} else {
 		privmsg(warroom, s_module_bot_name, "\0034WAR DECLARED");
 		for (wpln = 0; wpln < currentwarplayercount; wpln++) {
-			if ((wplayercardplayed[wpln] % 13) == hcnp) {
-				if (wplayercardstotal[wpln] < 3) {
-					privmsg(warroom, s_module_bot_name, "\0037%s\0038 Surrenders\0039 (Insufficient Cards)", wplayernick[wpln]);
-					hcnpt--;
-					removewar(wplayernick[wpln]);
-					if (currentwarplayercount < 2) {
-						wpln= currentwarplayercount;
-						return 1;
-					}
-				} else {
+			if (warinprogress == wplayeratwar[wpln]) {
+				wplayeratwar[wpln] = 0;
+				if ((wplayercardplayed[wpln] % 13) == hcnp) {
 					wplayeratwar[wpln]= 1;
+					if (wplayercardstotal[wpln] < 3) {
+						privmsg(warroom, s_module_bot_name, "\0037%s\0038 Surrenders\0039 (Insufficient Cards)", wplayernick[wpln]);
+						hcnpt--;
+						removewar(wplayernick[wpln]);
+						if (currentwarplayercount < 2) {
+							wpln= currentwarplayercount;
+							return 1;
+						}
+					}
 				}
 			}
 		}
@@ -796,9 +798,11 @@ int checkwarwinner() {
 	for (wpln = 0; wpln < currentwarplayercount; wpln++) {
 		if (wplayeratwar[wpln] == 1) {
 			wplayercardplayed[wpln]= wplayerwarcardsplayed[wpln][2];
-			for (wplnh = 0; wplnh < 3; wplnh++) {
-				wplayerwarcardsplayed[wpln][wplnh]= 0;
-			}
+		} else {
+			wplayercardplayed[wpln]= 0;
+		}
+		for (wplnh = 0; wplnh < 3; wplnh++) {
+			wplayerwarcardsplayed[wpln][wplnh]= 0;
 		}
 	}
 	checkhandwinner();

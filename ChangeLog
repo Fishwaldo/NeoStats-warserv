@@ -1,6 +1,8 @@
 WarServ ChangeLog
 =============================================================================
 1.2 - DeadNotBuried
+- fixed players being asked to play a war hand when they are not in the war
+- fixed error in calculating correct winner of a war
 - added Installation Instructions to Readme file
 - fixed version number displayed in !rules
 - added explanation of games to !rules
