@@ -320,7 +320,7 @@ int ModInit (Module *mod_ptr)
 */
 void ModFini (void)
 {
-	del_timer ("startwar");
+	DelTimer ("startwar");
 }
 
 /*
@@ -381,7 +381,7 @@ int playershufflecards() {
 */
 
 int stopwar() {
-	del_timer ("startwar");
+	DelTimer ("startwar");
 	for (wpln = 0; wpln < 10; wpln++) {
 		strlcpy (wplayernick[wpln], " ", MAXNICK);
 		wplayercardstotal[wpln]= 0;
@@ -414,7 +414,7 @@ int stopwar() {
 int startcountdowntimer(char *nic) {
 	strlcpy (currentwargamestatus, "starting", 10);
 	irc_chanprivmsg (ws_bot, warroom, "\0037A new game of \0034WAR\0037 has been started by %s. Game will start in 30 seconds, type '\2\003Join\2\0037' to play.", nic);
-	add_timer (TIMER_TYPE_INTERVAL, startwar, "startwar", 30);
+	AddTimer (TIMER_TYPE_INTERVAL, startwar, "startwar", 30);
 	return 1;
 }
 
@@ -425,7 +425,7 @@ int startcountdowntimer(char *nic) {
 
 int startwar(void) 
 {
-	del_timer ("startwar");
+	DelTimer ("startwar");
 	if (!ircstrcasecmp (currentwargamestatus, "starting")) {
 		if (currentwarplayercount < 1) {
 			irc_chanprivmsg (ws_bot, warroom, "\0034No Players joined to current Game, Exiting");
@@ -473,7 +473,7 @@ int joinwar(char *nic) {
 
 int removewarother(char *nic, char *ntr) {
 	Client *u;
-	u = find_user (ntr);
+	u = FindUser (ntr);
 	if (!u) {
 		removewar(ntr);
 	}
