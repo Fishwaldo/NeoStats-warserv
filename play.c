@@ -64,7 +64,7 @@ void stopwar() {
 
 void startcountdowntimer(char *nic) {
 	currentwargamestatus = WS_GAME_STARTING;
-	irc_chanprivmsg (ws_bot, warroom, "\0037A new game of \0034WAR\0037 has been started by %s. Game will start in 30 seconds, type '\2\003Join\2\0037' to play.", nic);
+	irc_chanprivmsg (ws_bot, warroom, "\0037A new game of \0034WAR\0037 has been started by %s. Game will start in 30 seconds, type '\2\003!Join\2\0037' to play.", nic);
 	AddTimer (TIMER_TYPE_COUNTDOWN, startwar, "startwar", 30);
 	return;
 }
@@ -249,6 +249,9 @@ void askplaycard() {
 	if (wplayercardstotal[currentplayer] == 52) {
 		currentplayer++;
 		removewar(wplayernick[currentplayer]);
+	}
+	if (currentwarplayercount < 2) {
+		return;
 	}
 	if (warinprogress == 1) {
 		if (currentplayer < currentwarplayercount) {
