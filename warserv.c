@@ -20,12 +20,8 @@
 ** $Id$
 */
 
-#ifdef WIN32
-#include "modconfigwin32.h"
-#else
-#include "modconfig.h"
-#endif
 #include "neostats.h"    /* Required for bot support */
+#include MODULECONFIG
 #include "warserv.h"
 
 /** Copyright info */
