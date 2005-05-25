@@ -26,13 +26,6 @@ Bot *ws_bot;
  * WarServ Module Help
 */
 extern const char *ws_help_set_chan[];
-extern const char ws_help_start_oneline[];
-extern const char ws_help_stop_oneline[];
-extern const char ws_help_join_oneline[];
-extern const char ws_help_remove_oneline[];
-extern const char ws_help_players_oneline[];
-extern const char ws_help_turn_oneline[];
-extern const char ws_help_play_oneline[];
 extern const char *ws_help_start[];
 extern const char *ws_help_stop[];
 extern const char *ws_help_join[];

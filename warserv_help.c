@@ -31,15 +31,9 @@ const char *ws_help_set_chan[] = {
 /*
  * Help Text
 */
-const char ws_help_start_oneline[] = "Start a Game in Channel";
-const char ws_help_stop_oneline[] = "Stops Game";
-const char ws_help_join_oneline[] = "Join a game currently Starting";
-const char ws_help_remove_oneline[] = "Remove From Game";
-const char ws_help_players_oneline[] = "Display Player List In Channel";
-const char ws_help_turn_oneline[] = "Display Current Player In Channel";
-const char ws_help_play_oneline[] = "Play Card(s)";
 
 const char *ws_help_start[] = {
+	"Start a Game in Channel",
 	"Syntax: \2START\2",
 	"",
 	"Starts War Game in configured Channel.",
@@ -47,6 +41,7 @@ const char *ws_help_start[] = {
 };
 
 const char *ws_help_stop[] = {
+	"Stops Game",
 	"Syntax: \2STOP\2",
 	"",
 	"Stops Currently Running War Game.",
@@ -57,6 +52,7 @@ const char *ws_help_stop[] = {
 };
 
 const char *ws_help_join[] = {
+	"Join a game currently Starting",
 	"Syntax: \2JOIN\2",
 	"",
 	"Joins you to the Currently Starting Game.",
@@ -65,6 +61,7 @@ const char *ws_help_join[] = {
 };
 
 const char *ws_help_remove[] = {
+	"Remove From Game",
 	"Syntax: \2REMOVE <nick>\2",
 	"",
 	"With No Nick specified, removes you from the current game.",
@@ -78,6 +75,7 @@ const char *ws_help_remove[] = {
 };
 
 const char *ws_help_players[] = {
+	"Display Player List In Channel",
 	"Syntax: \2PLAYERS\2",
 	"",
 	"Displays List of Current Players in channel.",
@@ -85,6 +83,7 @@ const char *ws_help_players[] = {
 };
 
 const char *ws_help_turn[] = {
+	"Display Current Player In Channel",
 	"Syntax: \2TURN\2",
 	"",
 	"Shows Current Player waiting to play Cards.",
@@ -92,6 +91,7 @@ const char *ws_help_turn[] = {
 };
 
 const char *ws_help_play[] = {
+	"Play Card(s)",
 	"Syntax: \2PLAY\2 # <#> <#>",
 	"",
 	"During Normal Round one card number must be entered.",

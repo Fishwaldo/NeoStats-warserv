@@ -55,14 +55,14 @@ const char *ws_about[] = {
 */
 static bot_cmd ws_commands[]=
 {
-	{"START",	StartWarGame,		0,	0,	ws_help_start,		ws_help_start_oneline},
-	{"STOP",	StopWarGame,		0,	0,	ws_help_stop,		ws_help_stop_oneline},
-	{"JOIN",	JoinWarGame,		0,	0,	ws_help_join,		ws_help_join_oneline},
-	{"REMOVE",	RemoveWarGame,		0,	0,	ws_help_remove,		ws_help_remove_oneline},
-	{"PLAYERS",	ShowPlayersWarGame,	0,	0,	ws_help_players,	ws_help_players_oneline},
-	{"TURN",	ShowTurnWarGame,	0,	0,	ws_help_turn,		ws_help_turn_oneline},
-	{"PLAY",	PlayCardsWarGame,	0,	0,	ws_help_play,		ws_help_play_oneline},
-	{NULL,		NULL,			0, 	0,	NULL,			NULL}
+	{"START",	StartWarGame,		0,	0,	ws_help_start},
+	{"STOP",	StopWarGame,		0,	0,	ws_help_stop},
+	{"JOIN",	JoinWarGame,		0,	0,	ws_help_join},
+	{"REMOVE",	RemoveWarGame,		0,	0,	ws_help_remove},
+	{"PLAYERS",	ShowPlayersWarGame,	0,	0,	ws_help_players},
+	{"TURN",	ShowTurnWarGame,	0,	0,	ws_help_turn},
+	{"PLAY",	PlayCardsWarGame,	0,	0,	ws_help_play},
+	{NULL,		NULL,				0, 	0,	NULL}
 };
 
 static bot_setting ws_settings[]=
