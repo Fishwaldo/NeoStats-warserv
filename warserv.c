@@ -24,6 +24,9 @@
 #include MODULECONFIG
 #include "warserv.h"
 
+static int ws_cmd_set_chan(CmdParams *cmdparams, SET_REASON reason) ;
+
+
 /** Copyright info */
 const char *ws_copyright[] = {
 	"Copyright (c) 2004-2005 Justin Hammond, Mark Hetherington, DeadNotBuried",

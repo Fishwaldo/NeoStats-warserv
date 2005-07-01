@@ -76,7 +76,6 @@ int RemoveWarGame (CmdParams* cmdparams);
 int ShowPlayersWarGame (CmdParams* cmdparams);
 int ShowTurnWarGame (CmdParams* cmdparams);
 int PlayCardsWarGame (CmdParams* cmdparams);
-static int ws_cmd_set_chan (CmdParams *cmdparams, SET_REASON reason);
 void wardealcards(void);
 void playershufflecards(void);
 void stopwar(void);
