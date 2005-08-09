@@ -1,5 +1,5 @@
 /* WarServ - War Card Game Service - NeoStats Addon Module
-** Copyright (c) 2004-2005 Justin Hammond, Mark Hetherington, DeadNotBuried
+** Copyright (c) 2004-2005 Justin Hammond, Mark Hetherington, Jeff Lang
 **
 **  This program is free software; you can redistribute it and/or modify
 **  it under the terms of the GNU General Public License as published by
@@ -64,7 +64,7 @@ void stopwar() {
 void startcountdowntimer(char *nic) {
 	currentwargamestatus = WS_GAME_STARTING;
 	irc_chanprivmsg (ws_bot, warroom, "\0037A new game of \0034WAR\0037 has been started by %s. Game will start in 30 seconds, type '\2\003!Join\2\0037' to play.", nic);
-	AddTimer (TIMER_TYPE_COUNTDOWN, startwar, "startwar", 30);
+	AddTimer (TIMER_TYPE_COUNTDOWN, startwar, "startwar", 30, NULL);
 	return;
 }
 
@@ -73,7 +73,7 @@ void startcountdowntimer(char *nic) {
  * Initializes variables and starts game
 */
 
-int startwar(void) 
+int startwar(void *userptr) 
 {
   /*	DelTimer ("startwar"); */
 	if (currentwargamestatus == WS_GAME_STARTING) {

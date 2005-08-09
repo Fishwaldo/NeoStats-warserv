@@ -1,5 +1,5 @@
 /* WarServ - War Card Game Service - NeoStats Addon Module
-** Copyright (c) 2004-2005 Justin Hammond, Mark Hetherington, DeadNotBuried
+** Copyright (c) 2004-2005 Justin Hammond, Mark Hetherington, Jeff Lang
 **
 **  This program is free software; you can redistribute it and/or modify
 **  it under the terms of the GNU General Public License as published by
@@ -80,7 +80,7 @@ void wardealcards(void);
 void playershufflecards(void);
 void stopwar(void);
 void startcountdowntimer(char *nic);
-int startwar(void);
+int startwar(void *userptr);
 void joinwar(char *nic);
 void removewarother(char *nic, char *ntr);
 void removewar(char *nic);
