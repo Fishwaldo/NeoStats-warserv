@@ -65,13 +65,13 @@ static bot_cmd ws_commands[]=
 	{"PLAYERS",	ShowPlayersWarGame,	0,	0,	ws_help_players},
 	{"TURN",	ShowTurnWarGame,	0,	0,	ws_help_turn},
 	{"PLAY",	PlayCardsWarGame,	0,	0,	ws_help_play},
-	{NULL,		NULL,				0, 	0,	NULL}
+	NS_CMD_END()
 };
 
 static bot_setting ws_settings[]=
 {
 	{"CHAN",	&warroom,	SET_TYPE_CHANNEL,	0,	MAXCHANLEN,	NS_ULEVEL_ADMIN,	NULL,	ws_help_set_chan,	ws_cmd_set_chan,	(void *)"#Games_War" },
-	{NULL,		NULL,		0,			0,	0,		0,			NULL,		NULL, 			NULL },
+	NS_SETTING_END()
 };
 
 
