@@ -96,7 +96,7 @@ ModuleInfo module_info = {
 */
 ModuleEvent module_events[] = {
 	{EVENT_NICK, PlayerNickChange},
-	{EVENT_NULL, NULL}
+	NS_EVENT_END()
 };
 
 /** BotInfo */
