@@ -24,7 +24,7 @@
 #include MODULECONFIG
 #include "warserv.h"
 
-static int ws_cmd_set_chan(CmdParams *cmdparams, SET_REASON reason) ;
+static int ws_cmd_set_chan(const CmdParams *cmdparams, SET_REASON reason) ;
 
 
 /** Copyright info */
@@ -155,7 +155,7 @@ int ModFini( void )
 /*
  * Set Overrides
 */
-static int ws_cmd_set_chan(CmdParams *cmdparams, SET_REASON reason) 
+static int ws_cmd_set_chan(const CmdParams *cmdparams, SET_REASON reason) 
 {
 	if (reason == SET_VALIDATE) {
 		if (currentwargamestatus != WS_GAME_STOPPED) {

@@ -26,7 +26,7 @@
 /*
  * Nick Change Check
 */
-int PlayerNickChange (CmdParams* cmdparams)
+int PlayerNickChange (const CmdParams *cmdparams)
 {
 	if (currentwarplayercount < 1) {
 		return NS_SUCCESS;
@@ -42,7 +42,7 @@ int PlayerNickChange (CmdParams* cmdparams)
 /*
  * Start War Game
 */
-int StartWarGame (CmdParams* cmdparams)
+int StartWarGame (const CmdParams *cmdparams)
 {
 	if (currentwargamestatus == WS_GAME_STOPPED) {
 		startcountdowntimer(cmdparams->source->name);
@@ -57,7 +57,7 @@ int StartWarGame (CmdParams* cmdparams)
 /*
  * Stop War Game
 */
-int StopWarGame (CmdParams* cmdparams)
+int StopWarGame (const CmdParams *cmdparams)
 {
 	if (currentwargamestatus != WS_GAME_STOPPED) {
 		if (cmdparams->source->user->ulevel >= NS_ULEVEL_OPER) {
@@ -82,7 +82,7 @@ int StopWarGame (CmdParams* cmdparams)
 /*
  * Join War Game
 */
-int JoinWarGame (CmdParams* cmdparams)
+int JoinWarGame (const CmdParams *cmdparams)
 {
 	if (currentwargamestatus == WS_GAME_STARTING) {
 		joinwar(cmdparams->source->name);
@@ -93,7 +93,7 @@ int JoinWarGame (CmdParams* cmdparams)
 /*
  * Remove From War Game
 */
-int RemoveWarGame (CmdParams* cmdparams)
+int RemoveWarGame (const CmdParams *cmdparams)
 {
 	Client *u;
 
@@ -115,7 +115,7 @@ int RemoveWarGame (CmdParams* cmdparams)
 /*
  * Display Current Players
 */
-int ShowPlayersWarGame (CmdParams* cmdparams)
+int ShowPlayersWarGame (const CmdParams *cmdparams)
 {
 	if (currentwargamestatus == WS_GAME_PLAYING) {
 		irc_chanprivmsg (ws_bot, warroom, "\0039Current Players are\0038 :\0037 %s %s %s %s %s %s %s %s %s %s", wplayernick[0], wplayernick[1], wplayernick[2], wplayernick[3], wplayernick[4], wplayernick[5], wplayernick[6], wplayernick[7], wplayernick[8], wplayernick[9]);
@@ -126,7 +126,7 @@ int ShowPlayersWarGame (CmdParams* cmdparams)
 /*
  * Display Current Player Turn
 */
-int ShowTurnWarGame (CmdParams* cmdparams)
+int ShowTurnWarGame (const CmdParams *cmdparams)
 {
 	if (currentwargamestatus == WS_GAME_PLAYING) {
 		if (warinprogress == 1) {
@@ -141,7 +141,7 @@ int ShowTurnWarGame (CmdParams* cmdparams)
 /*
  * Play Cards
 */
-int PlayCardsWarGame (CmdParams* cmdparams)
+int PlayCardsWarGame (const CmdParams *cmdparams)
 {
 	if (!ircstrcasecmp (cmdparams->source->name,wplayernick[currentplayer]) && currentwargamestatus == WS_GAME_PLAYING) {
 		if (warinprogress == 1) {

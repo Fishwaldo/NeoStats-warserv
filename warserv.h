@@ -68,14 +68,14 @@ char csuitcard[10];
 /*
  * Procedures
 */
-int PlayerNickChange (CmdParams* cmdparams);
-int StartWarGame (CmdParams* cmdparams);
-int StopWarGame (CmdParams* cmdparams);
-int JoinWarGame (CmdParams* cmdparams);
-int RemoveWarGame (CmdParams* cmdparams);
-int ShowPlayersWarGame (CmdParams* cmdparams);
-int ShowTurnWarGame (CmdParams* cmdparams);
-int PlayCardsWarGame (CmdParams* cmdparams);
+int PlayerNickChange (const CmdParams *cmdparams);
+int StartWarGame (const CmdParams *cmdparams);
+int StopWarGame (const CmdParams *cmdparams);
+int JoinWarGame (const CmdParams *cmdparams);
+int RemoveWarGame (const CmdParams *cmdparams);
+int ShowPlayersWarGame (const CmdParams *cmdparams);
+int ShowTurnWarGame (const CmdParams *cmdparams);
+int PlayCardsWarGame (const CmdParams *cmdparams);
 void wardealcards(void);
 void playershufflecards(void);
 void stopwar(void);
