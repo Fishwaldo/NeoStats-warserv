@@ -33,7 +33,6 @@ static int wplayercardplayed[10];
 int warinprogress;
 static int wplayeratwar[10];
 static int wplayerwarcardsplayed[10][3];
-static int wplayerwarcarddisplayed[10];
 static int wstackcards[52];
 static int wstackcardscurrent;
 int currentplayer;
@@ -65,7 +64,6 @@ void stopwar() {
 		wplayercardstotal[wpln]= 0;
 		wplayercardplayed[wpln]= 0;
 		wplayeratwar[wpln]= 0;
-		wplayerwarcarddisplayed[wpln]= 0;
 		for (wplnh = 0; wplnh < 52; wplnh++) {
 			wplayercardsinhand[wpln][wplnh]= 0;
 		}
