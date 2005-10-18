@@ -146,11 +146,11 @@ int PlayCardsWarGame (const CmdParams *cmdparams)
 	if (!ircstrcasecmp (cmdparams->source->name,wplayernick[currentplayer]) && currentwargamestatus == WS_GAME_PLAYING) {
 		if (warinprogress == 1) {
 			if (cmdparams->ac == 3) {
-				playwarcards(cmdparams->av[0], cmdparams->av[1], cmdparams->av[2]);
+				playwarcards(atoi(cmdparams->av[0]), atoi(cmdparams->av[1]), atoi(cmdparams->av[2]));
 			}
 		} else {
 			if (cmdparams->ac == 1) {
-				playcard(cmdparams->av[0]);
+				playcard(atoi(cmdparams->av[0]));
 			}
 		}
 	}

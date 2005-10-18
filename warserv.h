@@ -69,5 +69,5 @@ void stopwar(void);
 void startcountdowntimer(char *nic);
 void joinwar(char *nic);
 void removewar(char *nic);
-void playwarcards(const char *cnps1, const char *cnps2, const char *cnps3);
-void playcard(const char *cnps);
+void playwarcards(int cnp1, int cnp2, int cnp3);
+void playcard(int cnp);

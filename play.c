@@ -269,7 +269,6 @@ static void askplaycard(void)
 {
 	int trn;
 	int wspa[5];
-	char wspas[5][3];
 	int nwp = (currentwarplayercount + 1);
 	if (wplayercardstotal[currentplayer] == 0) {
 		removewar(wplayernick[currentplayer]);
@@ -310,17 +309,14 @@ static void askplaycard(void)
 				if ((wspa[4] == wspa[2]) || (wspa[4] == wspa[3])) {
 					wspa[4]++;
 				}
-				for (wpln = 2; wpln < 5; wpln++) {
-					ircsnprintf(wspas[wpln], 3, "%d", wspa[wpln]);				}
-				playwarcards(wspas[2], wspas[3], wspas[4]);
+				playwarcards(wspa[2], wspa[3], wspa[4]);
 			} else {
 				irc_chanprivmsg (ws_bot, warroom, "\0037%s\0039 you hold\00311 %d\0039 cards, and are currently at \0034WAR\0039 which three would you like to play ?", wplayernick[currentplayer], wplayercardstotal[currentplayer]);
 			}
 		}
 	} else {
 		if (!ircstrcasecmp (wplayernick[currentplayer], ws_bot->name)) {
-			ircsnprintf(wspas[0], 3, "%d", ((rand() % wplayercardstotal[currentplayer]) + 1));
-			playcard(wspas[0]);
+			playcard(((rand() % wplayercardstotal[currentplayer]) + 1));
 		} else {
 			irc_chanprivmsg (ws_bot, warroom, "\0037%s\0039 you currently hold\00311 %d\0039 cards, which would you like to play ?", wplayernick[currentplayer], wplayercardstotal[currentplayer]);
 		}
@@ -330,11 +326,12 @@ static void askplaycard(void)
 /*
  * Player War Play Card
 */
-void playwarcards(const char *cnps1, const char *cnps2, const char *cnps3) {
+void playwarcards(int cnp1, int cnp2, int cnp3)
+{
 	int cnp[3];
-	cnp[0] = atoi(cnps1);
-	cnp[1] = atoi(cnps2);
-	cnp[2] = atoi(cnps3);
+	cnp[0] = cnp1;
+	cnp[1] = cnp2;
+	cnp[2] = cnp3;
 	for (wpln = 0; wpln < 3; wpln++) {
 		if ((cnp[wpln] < 1) || (cnp[wpln] > wplayercardstotal[currentplayer])) {
 			return;
@@ -401,9 +398,8 @@ void playwarcards(const char *cnps1, const char *cnps2, const char *cnps3) {
 /*
  * Player Plays Card
 */
-void playcard(const char *cnps) {
-	int cnp;
-	cnp = atoi(cnps);
+void playcard(int cnp)
+{
 	if ((cnp > 0) && (cnp < (wplayercardstotal[currentplayer] + 1))){
 		if (wplayercardsinhand[currentplayer][(cnp - 1)] < 13) {
 			strlcpy (csuitcolour, "\0034", 10);
