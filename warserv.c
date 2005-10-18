@@ -26,6 +26,7 @@
 
 static int ws_cmd_set_chan(const CmdParams *cmdparams, SET_REASON reason) ;
 
+Bot *ws_bot;
 
 /** Copyright info */
 const char *ws_copyright[] = {

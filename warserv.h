@@ -20,7 +20,7 @@
 ** $Id$
 */
 
-Bot *ws_bot;
+extern Bot *ws_bot;
 
 /*
  * WarServ Module Help
