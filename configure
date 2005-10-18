@@ -1259,7 +1259,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 PACKAGE=WarServ
 MODULE_MAJOR=3
 MODULE_MINOR=0
-MODULE_REV=a2
+MODULE_REV=a3-dev
 VERSION=$MODULE_MAJOR.$MODULE_MINOR.$MODULE_REV
 cat >>confdefs.h <<_ACEOF
 #define MODULE_VERSION "$VERSION"
@@ -1279,7 +1279,7 @@ _ACEOF
 
 DIRINST=~/NeoStats3.0/
 
-CFLAGS="$CFLAGS -O2"
+CFLAGS="$CFLAGS -O2 -fno-strict-aliasing"
 
 case "$host_os" in
 *openbsd*)
