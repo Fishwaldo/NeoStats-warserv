@@ -29,12 +29,12 @@ static int ws_cmd_set_chan(const CmdParams *cmdparams, SET_REASON reason) ;
 Bot *ws_bot;
 
 /** Copyright info */
-const char *ws_copyright[] = {
+static const char *ws_copyright[] = {
 	"Copyright (c) 2004-2005 Justin Hammond, Mark Hetherington, DeadNotBuried",
 	NULL
 };
 
-const char *ws_about[] = {
+static const char *ws_about[] = {
 	"\2War Card Game Service\2",
 	"",
 	"All cards are Dealt out evenly when the game starts.",
@@ -59,19 +59,19 @@ const char *ws_about[] = {
 */
 static bot_cmd ws_commands[]=
 {
-	{"START",	StartWarGame,		0,	0,	ws_help_start},
-	{"STOP",	StopWarGame,		0,	0,	ws_help_stop},
-	{"JOIN",	JoinWarGame,		0,	0,	ws_help_join},
-	{"REMOVE",	RemoveWarGame,		0,	0,	ws_help_remove},
-	{"PLAYERS",	ShowPlayersWarGame,	0,	0,	ws_help_players},
-	{"TURN",	ShowTurnWarGame,	0,	0,	ws_help_turn},
-	{"PLAY",	PlayCardsWarGame,	0,	0,	ws_help_play},
+	{"START",	StartWarGame,		0,	0,	ws_help_start, 0, NULL, NULL},
+	{"STOP",	StopWarGame,		0,	0,	ws_help_stop, 0, NULL, NULL},
+	{"JOIN",	JoinWarGame,		0,	0,	ws_help_join, 0, NULL, NULL},
+	{"REMOVE",	RemoveWarGame,		0,	0,	ws_help_remove, 0, NULL, NULL},
+	{"PLAYERS",	ShowPlayersWarGame,	0,	0,	ws_help_players, 0, NULL, NULL},
+	{"TURN",	ShowTurnWarGame,	0,	0,	ws_help_turn, 0, NULL, NULL},
+	{"PLAY",	PlayCardsWarGame,	0,	0,	ws_help_play, 0, NULL, NULL},
 	NS_CMD_END()
 };
 
 static bot_setting ws_settings[]=
 {
-	{"CHAN",	&warroom,	SET_TYPE_CHANNEL,	0,	MAXCHANLEN,	NS_ULEVEL_ADMIN,	NULL,	ws_help_set_chan,	ws_cmd_set_chan,	(void *)"#Games_War" },
+	{"CHAN",	warroom,	SET_TYPE_CHANNEL,	0,	MAXCHANLEN,	NS_ULEVEL_ADMIN,	NULL,	ws_help_set_chan,	ws_cmd_set_chan,	(void *)"#Games_War" },
 	NS_SETTING_END()
 };
 
@@ -90,13 +90,14 @@ ModuleInfo module_info = {
 	__TIME__,
 	0,
 	0,
+	0,
 };
 
 /*
  * Module event list
 */
 ModuleEvent module_events[] = {
-	{EVENT_NICK, PlayerNickChange},
+	{EVENT_NICK, PlayerNickChange, 0},
 	NS_EVENT_END()
 };
 
@@ -131,7 +132,7 @@ int ModSynch (void)
 	irc_chanalert (ws_bot, "Game will start in %s", warroom);
 	irc_join (ws_bot, warroom, "+o");
 	return NS_SUCCESS;
-};
+}
 
 /*
  * Init module

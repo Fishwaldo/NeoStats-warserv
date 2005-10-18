@@ -28,20 +28,28 @@ int currentwargamestatus;
 int currentwarplayercount;
 char wplayernick[10][MAXNICK];
 int wplayercardstotal[10];
-int wplayercardsinhand[10][52];
-int wplayercardplayed[10];
+static int wplayercardsinhand[10][52];
+static int wplayercardplayed[10];
 int warinprogress;
-int wplayeratwar[10];
-int wplayerwarcardsplayed[10][3];
-int wplayerwarcarddisplayed[10];
-int wstackcards[52];
-int wstackcardscurrent;
+static int wplayeratwar[10];
+static int wplayerwarcardsplayed[10][3];
+static int wplayerwarcarddisplayed[10];
+static int wstackcards[52];
+static int wstackcardscurrent;
 int currentplayer;
 int wpln;
-int wplnh;
-char csuit[10];
-char csuitcolour[10];
-char csuitcard[10];
+static int wplnh;
+static char csuit[10];
+static char csuitcolour[10];
+static char csuitcard[10];
+
+static void checkhandwinner(void);
+static void checkwarwinner(void);
+static void clearstack(void);
+static void playershufflecards(void);
+static void wardealcards(void);
+static void askplaycard(void);
+int startwar(void *userptr);
 
 /*
  * Stop Game
@@ -93,7 +101,7 @@ void startcountdowntimer(char *nic) {
  * Initializes variables and starts game
 */
 
-int startwar(void *userptr) 
+int startwar(void *userptr)
 {
   /*	DelTimer ("startwar"); */
 	if (currentwargamestatus == WS_GAME_STARTING) {
@@ -204,7 +212,7 @@ void removewar(char *nic) {
 /*
  * Deal Cards
 */
-void wardealcards() {
+static void wardealcards(void) {
 	int cd;
 	int cnd;
 	int cndn;
@@ -232,7 +240,7 @@ void wardealcards() {
  * Shuffle Players Cards
 */
 
-void playershufflecards() {
+void playershufflecards(void) {
 	int tcs;
 	int tcsp;
 	int tcsps;
@@ -257,7 +265,8 @@ void playershufflecards() {
  * or check war results if in war
  * or removes player if no cards left
 */
-void askplaycard() {
+static void askplaycard(void)
+{
 	int trn;
 	int wspa[5];
 	char wspas[5][3];
@@ -321,7 +330,7 @@ void askplaycard() {
 /*
  * Player War Play Card
 */
-void playwarcards(char *cnps1, char *cnps2, char *cnps3) {
+void playwarcards(const char *cnps1, const char *cnps2, const char *cnps3) {
 	int cnp[3];
 	cnp[0] = atoi(cnps1);
 	cnp[1] = atoi(cnps2);
@@ -392,7 +401,7 @@ void playwarcards(char *cnps1, char *cnps2, char *cnps3) {
 /*
  * Player Plays Card
 */
-void playcard(char *cnps) {
+void playcard(const char *cnps) {
 	int cnp;
 	cnp = atoi(cnps);
 	if ((cnp > 0) && (cnp < (wplayercardstotal[currentplayer] + 1))){
@@ -448,7 +457,8 @@ void playcard(char *cnps) {
 /*
  * Checks standard hand for a winner (not a war hand)
 */
-void checkhandwinner() {
+static void checkhandwinner(void)
+{
 	int hcnp = 0;
 	int hcnpt = 0;
 	for (wpln = 0; wpln < currentwarplayercount; wpln++) {
@@ -512,7 +522,7 @@ void checkhandwinner() {
 /*
  * copy war hand to normal for checking
 */
-void checkwarwinner() {
+static void checkwarwinner(void) {
 	for (wpln = 0; wpln < currentwarplayercount; wpln++) {
 		if (wplayeratwar[wpln] == 1) {
 			wplayercardplayed[wpln]= wplayerwarcardsplayed[wpln][2];
@@ -529,7 +539,7 @@ void checkwarwinner() {
 /*
  * clears the stack
 */
-void clearstack() {
+static void clearstack(void) {
 	for (wpln = 0; wpln < 52; wpln++) {
 		wstackcards[wpln]= 0;
 	}
