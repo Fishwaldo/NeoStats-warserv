@@ -23,6 +23,26 @@
 #include "neostats.h"    /* Required for bot support */
 #include "warserv.h"
 
+char warroom[MAXCHANLEN];
+int currentwargamestatus;
+int currentwarplayercount;
+char wplayernick[10][MAXNICK];
+int wplayercardstotal[10];
+int wplayercardsinhand[10][52];
+int wplayercardplayed[10];
+int warinprogress;
+int wplayeratwar[10];
+int wplayerwarcardsplayed[10][3];
+int wplayerwarcarddisplayed[10];
+int wstackcards[52];
+int wstackcardscurrent;
+int currentplayer;
+int wpln;
+int wplnh;
+char csuit[10];
+char csuitcolour[10];
+char csuitcard[10];
+
 /*
  * Stop Game
  * resets everything to default as if no game running

@@ -45,25 +45,25 @@ extern const char *ws_help_play[];
 /*
  * Variables
 */
-char warroom[MAXCHANLEN];
-int currentwargamestatus;
-int currentwarplayercount;
-char wplayernick[10][MAXNICK];
-int wplayercardstotal[10];
-int wplayercardsinhand[10][52];
-int wplayercardplayed[10];
-int warinprogress;
-int wplayeratwar[10];
-int wplayerwarcardsplayed[10][3];
-int wplayerwarcarddisplayed[10];
-int wstackcards[52];
-int wstackcardscurrent;
-int currentplayer;
-int wpln;
-int wplnh;
-char csuit[10];
-char csuitcolour[10];
-char csuitcard[10];
+extern char warroom[MAXCHANLEN];
+extern int currentwargamestatus;
+extern int currentwarplayercount;
+extern char wplayernick[10][MAXNICK];
+extern int wplayercardstotal[10];
+extern int wplayercardsinhand[10][52];
+extern int wplayercardplayed[10];
+extern int warinprogress;
+extern int wplayeratwar[10];
+extern int wplayerwarcardsplayed[10][3];
+extern int wplayerwarcarddisplayed[10];
+extern int wstackcards[52];
+extern int wstackcardscurrent;
+extern int currentplayer;
+extern int wpln;
+extern int wplnh;
+extern char csuit[10];
+extern char csuitcolour[10];
+extern char csuitcard[10];
 
 /*
  * Procedures
