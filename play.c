@@ -38,7 +38,6 @@ static int wplayeratwar[10];
 static int wplayerwarcardsplayed[10][3];
 static int wstackcards[52];
 static int wstackcardscurrent;
-static int wplnh;
 static char csuit[10];
 static char csuitcolour[10];
 static char csuitcard[10];
@@ -56,7 +55,9 @@ int startwar(void *userptr);
  * resets everything to default as if no game running
 */
 
-void stopwar() {
+void stopwar(void)
+{
+	int i;
 	if (currentwargamestatus == WS_GAME_STARTING) {
 		DelTimer ("startwar");
 	}
@@ -65,11 +66,11 @@ void stopwar() {
 		wplayercardstotal[wpln]= 0;
 		wplayercardplayed[wpln]= 0;
 		wplayeratwar[wpln]= 0;
-		for (wplnh = 0; wplnh < 52; wplnh++) {
-			wplayercardsinhand[wpln][wplnh]= 0;
+		for (i = 0; i < 52; i++) {
+			wplayercardsinhand[wpln][i]= 0;
 		}
-		for (wplnh = 0; wplnh < 3; wplnh++) {
-			wplayerwarcardsplayed[wpln][wplnh]= 0;
+		for (i = 0; i < 3; i++) {
+			wplayerwarcardsplayed[wpln][i]= 0;
 		}
 	}
 	for (wpln = 0; wpln < 52; wpln++) {
@@ -149,7 +150,9 @@ void joinwar(char *nic) {
  * removes player from game and adds any cards they have to the stack
 */
 
-void removewar(char *nic) {
+void removewar(char *nic)
+{
+	int i;
 	int tfrpacp;
 	int tfrpacpn;
 	int wplnht;
@@ -172,20 +175,20 @@ void removewar(char *nic) {
 				wstackcards[wstackcardscurrent]= wplayercardsinhand[wpln][wplnht];
 				wstackcardscurrent++;
 			}
-			for (wplnh = wpln; wplnh < currentwarplayercount; wplnh++) {
-				cpfp= (wplnh + 1);
+			for (i = wpln; i < currentwarplayercount; i++) {
+				cpfp= (i + 1);
 				if (cpfp == currentwarplayercount) {
-					strlcpy (wplayernick[wplnh], " ", MAXNICK);
-					for (wplnht = 0; wplnht < wplayercardstotal[wplnh]; wplnht++) {
-						wplayercardsinhand[wplnh][wplnht]= 0;
+					strlcpy (wplayernick[i], " ", MAXNICK);
+					for (wplnht = 0; wplnht < wplayercardstotal[i]; wplnht++) {
+						wplayercardsinhand[i][wplnht]= 0;
 					}
-					wplayercardstotal[wplnh]= 0;
+					wplayercardstotal[i]= 0;
 				} else {
-					strlcpy (wplayernick[wplnh], wplayernick[cpfp], MAXNICK);
+					strlcpy (wplayernick[i], wplayernick[cpfp], MAXNICK);
 					for (wplnht = 0; wplnht < 52; wplnht++) {
-						wplayercardsinhand[wplnh][wplnht]= wplayercardsinhand[cpfp][wplnht];
+						wplayercardsinhand[i][wplnht]= wplayercardsinhand[cpfp][wplnht];
 					}
-					wplayercardstotal[wplnh]= wplayercardstotal[cpfp];
+					wplayercardstotal[i]= wplayercardstotal[cpfp];
 				}
 			}
 			currentwarplayercount--;
@@ -239,21 +242,24 @@ static void wardealcards(void) {
  * Shuffle Players Cards
 */
 
-void playershufflecards(void) {
+void playershufflecards(void)
+{
 	int tcs;
 	int tcsp;
 	int tcsps;
+	int i;
+
 	for (wpln = 0; wpln < currentwarplayercount; wpln++) {
-		for (wplnh = 0; wplnh < wplayercardstotal[wpln]; wplnh++) {
+		for (i = 0; i < wplayercardstotal[wpln]; i++) {
 			tcsps= 0;
 			tcsp= rand() % wplayercardstotal[wpln];
-			if (tcsp == wplnh) {
+			if (tcsp == i) {
 				tcsps= 1;
 			}
 			if (tcsps == 0) {
 				tcs= wplayercardsinhand[wpln][tcsp];
-				wplayercardsinhand[wpln][tcsp] = wplayercardsinhand[wpln][wplnh];
-				wplayercardsinhand[wpln][wplnh] = tcs;
+				wplayercardsinhand[wpln][tcsp] = wplayercardsinhand[wpln][i];
+				wplayercardsinhand[wpln][i] = tcs;
 			}
 		}
 	}
@@ -327,6 +333,7 @@ static void askplaycard(void)
 */
 void playwarcards(int cnp1, int cnp2, int cnp3)
 {
+	int i;
 	int cnp[3];
 	cnp[0] = cnp1;
 	cnp[1] = cnp2;
@@ -381,8 +388,8 @@ void playwarcards(int cnp1, int cnp2, int cnp3)
 		cnp[1]--;
 	for (wpln = 0; wpln < 3; wpln++) {
 		wplayercardstotal[currentplayer]--;
-		for (wplnh = cnp[wpln]; wplnh < wplayercardstotal[currentplayer]; wplnh++) {
-			wplayercardsinhand[currentplayer][wplnh]= wplayercardsinhand[currentplayer][(wplnh +1)];
+		for (i = cnp[wpln]; i < wplayercardstotal[currentplayer]; i++) {
+			wplayercardsinhand[currentplayer][i]= wplayercardsinhand[currentplayer][(i +1)];
 		}
 		wplayercardsinhand[currentplayer][wplayercardstotal[currentplayer]]= 0;
 	}
@@ -454,6 +461,7 @@ void playcard(int cnp)
 */
 static void checkhandwinner(void)
 {
+	int i;
 	int hcnp = 0;
 	int hcnpt = 0;
 	for (wpln = 0; wpln < currentwarplayercount; wpln++) {
@@ -475,8 +483,8 @@ static void checkhandwinner(void)
 					} else {
 						irc_chanprivmsg (ws_bot, warroom, "\0037%s\0039 takes the hand.", wplayernick[wpln]);
 					}
-					for (wplnh = 0; wplnh < wstackcardscurrent; wplnh++) {
-						wplayercardsinhand[wpln][wplayercardstotal[wpln]]= wstackcards[wplnh];
+					for (i = 0; i < wstackcardscurrent; i++) {
+						wplayercardsinhand[wpln][wplayercardstotal[wpln]]= wstackcards[i];
 						wplayercardstotal[wpln]++;
 					}
 					clearstack();
@@ -517,15 +525,17 @@ static void checkhandwinner(void)
 /*
  * copy war hand to normal for checking
 */
-static void checkwarwinner(void) {
+static void checkwarwinner(void)
+{
+	int i;
 	for (wpln = 0; wpln < currentwarplayercount; wpln++) {
 		if (wplayeratwar[wpln] == 1) {
 			wplayercardplayed[wpln]= wplayerwarcardsplayed[wpln][2];
 		} else {
 			wplayercardplayed[wpln]= 0;
 		}
-		for (wplnh = 0; wplnh < 3; wplnh++) {
-			wplayerwarcardsplayed[wpln][wplnh]= 0;
+		for (i = 0; i < 3; i++) {
+			wplayerwarcardsplayed[wpln][i]= 0;
 		}
 	}
 	checkhandwinner();
