@@ -86,6 +86,7 @@ int JoinWarGame (const CmdParams *cmdparams)
 {
 	if (currentwargamestatus == WS_GAME_STARTING) {
 		joinwar(cmdparams->source->name);
+		SetUserModValue(cmdparams->source,(void *)1);
 	}
 	return NS_SUCCESS;
 }
@@ -104,9 +105,13 @@ int RemoveWarGame (const CmdParams *cmdparams)
 			u = FindUser(cmdparams->av[0]);
 			if (!u || cmdparams->source->user->ulevel >= NS_ULEVEL_OPER) {
 				removewar(u->name);
+				if (GetUserModValue(u) > 0)
+					ClearUserModValue(u);
 			}		
 		} else {
 			removewar(cmdparams->source->name);
+			if (GetUserModValue(cmdparams->source) > 0)
+				ClearUserModValue(cmdparams->source);
 		}
 	}
 	return NS_SUCCESS;
@@ -153,6 +158,50 @@ int PlayCardsWarGame (const CmdParams *cmdparams)
 				playcard(atoi(cmdparams->av[0]));
 			}
 		}
+	}
+	return NS_SUCCESS;
+}
+
+/*
+ * User Events
+ *
+ * check if user is a War Player
+ * and if so, remove from game as appropriate
+*/
+int CheckPlayerPart (const CmdParams *cmdparams)
+ {
+	SET_SEGV_LOCATION();
+	if (GetUserModValue(cmdparams->source) > 0)
+		RemoveWarGame(cmdparams);
+	return NS_SUCCESS;
+}
+
+int CheckPlayerQuit (const CmdParams *cmdparams) 
+{
+	SET_SEGV_LOCATION();
+	if (GetUserModValue(cmdparams->source) > 0)
+		RemoveWarGame(cmdparams);
+	return NS_SUCCESS;
+}
+
+int CheckPlayerKick (const CmdParams *cmdparams) 
+{
+	SET_SEGV_LOCATION();
+	if (GetUserModValue(cmdparams->target) > 0 && currentwargamestatus != WS_GAME_STOPPED)
+	{
+		removewar(cmdparams->target->name);
+		ClearUserModValue(cmdparams->target);
+	}
+	return NS_SUCCESS;
+}
+
+int CheckPlayerKill (const CmdParams *cmdparams) 
+{
+	SET_SEGV_LOCATION();
+	if (GetUserModValue(cmdparams->target) > 0 && currentwargamestatus != WS_GAME_STOPPED)
+	{
+		removewar(cmdparams->target->name);
+		ClearUserModValue(cmdparams->target);
 	}
 	return NS_SUCCESS;
 }

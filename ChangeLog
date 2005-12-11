@@ -3,6 +3,7 @@ Fish (F), Mark (M), DeadNotBuried (D)
 =============================================================================
 3.0.a3-dev
  - Update Copyright (D)
+ - Automatically remove players from game if they leave the channel/Network (D)
 
 3.0.a2 - Mark (M)
  - Update settings table to a2 compatible format. (M)
