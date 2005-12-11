@@ -98,8 +98,6 @@ ModuleInfo module_info = {
 */
 ModuleEvent module_events[] = {
 	{EVENT_NICK, PlayerNickChange, 0},
-
-
 	{EVENT_QUIT,		CheckPlayerQuit},
 	{EVENT_KILL,		CheckPlayerKill},
 	{EVENT_LOCALKILL,	CheckPlayerKill},
