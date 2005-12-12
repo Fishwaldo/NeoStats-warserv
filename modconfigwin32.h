@@ -12,4 +12,4 @@
 #define MODULE_MINOR "0"
 
 /* Revision */
-#define MODULE_REV "a3-dev"
+#define MODULE_REV "a3"
