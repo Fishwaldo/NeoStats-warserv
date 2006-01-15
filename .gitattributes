@@ -6,6 +6,8 @@
 /Makefile.in -text
 /NEWS -text
 /README.WarServ -text
+/README.WarServ.html -text
+/README.WarServ.xml -text
 /RELNOTES -text
 /configure -text
 /configure.in -text
