@@ -1,5 +1,5 @@
 /* WarServ - War Card Game Service - NeoStats Addon Module
-** Copyright (c) 2004-2005 Justin Hammond, Mark Hetherington, Jeff Lang
+** Copyright (c) 2004-2006 Justin Hammond, Mark Hetherington, Jeff Lang
 **
 **  This program is free software; you can redistribute it and/or modify
 **  it under the terms of the GNU General Public License as published by
