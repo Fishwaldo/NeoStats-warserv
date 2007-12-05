@@ -16,6 +16,7 @@
 /modconfig.h.in -text
 /modconfigwin32.h -text
 /play.c -text
+/pulse.xml -text
 /warserv.c -text
 /warserv.h -text
 /warserv.vcproj -text
