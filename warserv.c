@@ -21,7 +21,11 @@
 */
 
 #include "neostats.h"    /* Required for bot support */
-#include MODULECONFIG
+#ifdef WIN32
+#include "modconfigwin32.h"
+#else
+#include "modconfig.h"
+#endif
 #include "warserv.h"
 
 static int ws_cmd_set_chan(const CmdParams *cmdparams, SET_REASON reason) ;
