@@ -6,7 +6,7 @@ OperatingSystem=WinXP  5.1  2600 (Service Pack 2)
 ProcessorNameString=Intel(R) Xeon(TM) CPU 2.40GHz
 ComputerRAM=1534 MB
 ProjectDrive=
-DateTime=07-MAR-2008  15:46:37
+DateTime=10-MAR-2008  16:22:42
 OutputType=EXE
 Language=ENGLISH
 License=PRO
@@ -87,7 +87,7 @@ CompanyUrl=
 
 [TargetExe]
 TargetDirectory=<ProgramFilesDir>NeoStats
-CommonDirectory=<CommonFilesDir>NeoStats\modules
+CommonDirectory=<ProgramFilesDir>NeoStats\modules
 AuxDirectory=<FontDir>
 TargetExeName=<Common Folder>\WarServ.dll
 
