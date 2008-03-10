@@ -1,5 +1,5 @@
 /* WarServ - War Card Game Service - NeoStats Addon Module
-** Copyright (c) 2004-2006 Justin Hammond, Mark Hetherington, Jeff Lang
+** Copyright (c) 2004-2008 Justin Hammond, Mark Hetherington, Jeff Lang
 **
 **  This program is free software; you can redistribute it and/or modify
 **  it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ Bot *ws_bot;
 
 /** Copyright info */
 static const char *ws_copyright[] = {
-	"Copyright (c) 2004-2006 Justin Hammond, Mark Hetherington, DeadNotBuried",
+	"Copyright (c) 2004-2008 Justin Hammond, Mark Hetherington, DeadNotBuried",
 	NULL
 };
 
