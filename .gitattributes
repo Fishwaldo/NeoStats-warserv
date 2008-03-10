@@ -3,12 +3,14 @@
 /COPYING -text
 /ChangeLog -text
 /LICENSE -text
+/Makefile.am -text
 /Makefile.in -text
 /NEWS -text
 /README.WarServ -text
 /README.WarServ.html -text
 /README.WarServ.xml -text
 /RELNOTES -text
+/aclocal.m4 -text
 /configure -text
 /configure.in -text
 /events.c -text
