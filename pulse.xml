@@ -57,7 +57,7 @@
         </command>
         <command name="MakeDist">
             <executable name="MakeSnap" exe="${base.dir}\\win32\\buildwin32snap.bat" args="${build.revision}"/>
-            <artifact name="WarServ Setup File" file="${base.dir}\\tools\\WarServ-Setup-*.exe"/>
+            <artifact name="WarServ Setup File" file="${base.dir}\\win32\\WarServ-Setup-*.exe"/>
         </command>
     </recipe>
 </project>
