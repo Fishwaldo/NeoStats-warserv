@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="warserv"
-	ProjectGUID="{C738F54E-9E23-457A-BF50-D7A91A084E76}"
-	RootNamespace="warserv"
+	Name="WarServ"
+	ProjectGUID="{D4947737-CFE5-4368-92AF-B79C0F55D09B}"
+	RootNamespace="WarServ"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -41,8 +41,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\dev\include;..\dev\lib\adns;;..\dev\lib\curl;..\dev\lib\pcre"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;warserv_EXPORTS"
+				AdditionalIncludeDirectories="..\dev\include;..\dev\lib\curl;..\dev\lib\pcre"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;WarServ_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="0"
@@ -63,14 +63,15 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="Ws2_32.lib neostats.lib pcred.lib"
-				OutputFile="../dev/modules/warservd.dll"
+				OutputFile="../dev/modules/WarServd.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="C:\cygwin\home\Mark\nsdev\dev\lib;..\dev\src\Debug"
+				AdditionalLibraryDirectories="..\\dev\lib;..\dev\src\Debug"
+				IgnoreDefaultLibraryNames="LIBC"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(OutDir)/warserv.pdb"
+				ProgramDatabaseFile="$(OutDir)/WarServ.pdb"
 				SubSystem="2"
 				ResourceOnlyDLL="false"
-				ImportLibrary="$(OutDir)/warserv.lib"
+				ImportLibrary="$(OutDir)/WarServ.lib"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -123,8 +124,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\dev\include;..\dev\lib\adns;;..\dev\lib\curl;..\dev\lib\pcre"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;warserv_EXPORTS"
+				AdditionalIncludeDirectories="&quot;%programfiles%\NeoStats\include&quot;;&quot;C:\Program Files\NeoStats\include&quot;;win32"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;WarServ_EXPORTS;LIBRARY_MODE;YY_NO_UNISTD_H;TALKFILTERS_EXPORTS"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -142,15 +143,16 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="neostats.lib"
-				OutputFile="../warserv.dll"
+				AdditionalDependencies="Ws2_32.lib neostats.lib pcre.lib"
+				OutputFile="WarServ.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\dev\src\Release"
+				AdditionalLibraryDirectories="&quot;C:\program Files\NeoStats\libs&quot;"
+				IgnoreDefaultLibraryNames="LIBC"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				ImportLibrary="$(OutDir)/warserv.lib"
+				ImportLibrary="$(OutDir)/WarServ.lib"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -210,7 +212,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\modconfigwin32.h"
+				RelativePath=".\win32\modconfigwin32.h"
 				>
 			</File>
 			<File
@@ -223,23 +225,11 @@
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
+			<File
+				RelativePath=".\win32\neostatsversion.rc"
+				>
+			</File>
 		</Filter>
-		<File
-			RelativePath=".\ChangeLog"
-			>
-		</File>
-		<File
-			RelativePath=".\License"
-			>
-		</File>
-		<File
-			RelativePath=".\README.WarServ"
-			>
-		</File>
-		<File
-			RelativePath=".\Relnotes"
-			>
-		</File>
 	</Files>
 	<Globals>
 	</Globals>

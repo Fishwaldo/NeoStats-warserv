@@ -1,0 +1,17 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual C++ Express 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WarServ", "warserv.vcproj", "{D4947737-CFE5-4368-92AF-B79C0F55D09B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D4947737-CFE5-4368-92AF-B79C0F55D09B}.Release|Win32.ActiveCfg = Release|Win32
+		{D4947737-CFE5-4368-92AF-B79C0F55D09B}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,29 @@
+#include "modconfigwin32.h"
+1 VERSIONINFO
+	FILEVERSION MOD_WIN32VERN
+	PRODUCTVERSION MOD_WIN32VERN
+	FILEFLAGSMASK 0x3fL
+	FILEFLAGS 0x1L
+	FILEOS 0x4L
+	FILETYPE 0x1L
+	FILESUBTYPE 0x0L
+	BEGIN
+		BLOCK "StringFileInfo"
+		BEGIN
+			BLOCK "040704e4"
+	        BEGIN
+		        VALUE "CompanyName", "NeoStats"
+			    VALUE "Copyright (C) 2008", "Copyright (c) 1999-2008 Justin Hammond, Mark Hetherington, Jeff Lang"
+				VALUE "FileDescription", "NeoStats IRC Services"
+	            VALUE "FileVersion", MOD_WIN32VER
+		        VALUE "InternalName", "warserv.dll"
+			    VALUE "OriginalFilename", "warserv.dll"
+	            VALUE "ProductName", "WarServ for win32"
+		        VALUE "ProductVersion", MOD_WIN32VER
+	        END
+	    END
+	    BLOCK "VarFileInfo"
+		BEGIN
+			VALUE "Translation", 0x407, 1252
+	    END
+	END
