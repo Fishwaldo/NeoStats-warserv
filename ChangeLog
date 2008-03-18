@@ -1,6 +1,9 @@
 WarServ ChangeLog
 Fish (F), Mark (M), DeadNotBuried (D)
 =============================================================================
+3.0.0 - Fish (F)
+ - Release WarServ 3.0.0
+
 3.0.a3
  - Update Copyright (D)
  - Automatically remove players from game if they leave the channel/Network (D)
