@@ -8,7 +8,7 @@
 /NEWS -text
 /README.WarServ -text
 /RELNOTES -text
-/RELNOTES.win32.txt -text
+/RELNOTES.win32.txt eol=crlf
 /aclocal.m4 -text
 /configure -text
 /configure.in -text
